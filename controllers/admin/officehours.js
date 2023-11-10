@@ -3,6 +3,7 @@ const Events = require("../../models/admin/events");
 const Speakers = require("../../models/admin/speakers"); // Import the Speakers model
 const officeHoursValidationsPost = require("../../validations/admin/officeHours/officeHoursPost")
 const officeHoursValidationsPut = require("../../validations/admin/officeHours/officeHoursPut")
+const ValidateId = require('../../services/exceptionHandling');
 
 // CREATE OFFICE-HOURS
 exports.officeHours = async (req, res) => {
@@ -45,6 +46,7 @@ exports.officeHours = async (req, res) => {
   }
 };
 
+// UPDATE OFFICE-HOURS BY ID
 exports.updateOfficeHours = async (req, res) => {
   try {
     const { error } = officeHoursValidationsPut(req.body);
@@ -53,11 +55,10 @@ exports.updateOfficeHours = async (req, res) => {
     }
 
     const eventId = req.params.id;
-    if (!/^\d+$/.test(eventId)) {
-      return res.status(400).json({
-        message: "Invalid ID format",
-      });
-    }
+    const exceptionResult = await ValidateId(eventId);
+    if (exceptionResult)
+      return res.status(400).json(exceptionResult);
+
     const { program_id, title, description, event_date, image_url, content_url, status, speaker_id } = req.body;
 
     const existingEvent = await Events.findByPk(eventId);
@@ -123,11 +124,10 @@ exports.getAllOfficeHours = async (req, res) => {
 exports.getByProgramIdOfficeHours = async (req, res) => {
   try {
     const programId = req.params.program_id; // Use 'programId' to match the parameter in the route definition
-    if (!/^\d+$/.test(programId)) {
-      return res.status(400).json({
-        message: "Invalid ID format",
-      });
-    }
+    const exceptionResult = await ValidateId(programId);
+    if (exceptionResult)
+      return res.status(400).json(exceptionResult);
+
     if (programId == 4) {
       const event = await Events.findAll({
         where: { program_id: programId }, // Filter by program_id
@@ -149,7 +149,7 @@ exports.getByProgramIdOfficeHours = async (req, res) => {
         data: event,
       });
     }
-    else{
+    else {
       return res.status(404).json({ message: "There is no office hours event with this program id" });
     }
 
@@ -163,11 +163,10 @@ exports.getByProgramIdOfficeHours = async (req, res) => {
 exports.getByIdOfficeHours = async (req, res) => {
   try {
     const eventId = req.params.id; // Use 'eventId' to match the parameter in the route definition
-    if (!/^\d+$/.test(eventId)) {
-      return res.status(400).json({
-        message: "Invalid ID format",
-      });
-    }
+    const exceptionResult = await ValidateId(eventId);
+    if (exceptionResult)
+      return res.status(400).json(exceptionResult);
+
     // Use Sequelize to find the event by its ID and include speaker details
     const event = await Events.findByPk(eventId, {
       include: [

@@ -7,12 +7,12 @@ const GoalsProducts = sequelize.define("user_goal_products", {
   user_goal_id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
-    allowNull: false,
+    allowNull: true,
   },
   user_product_id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
-    allowNull: false,
+    allowNull: true,
   },
 }, {
   freezeTableName: true

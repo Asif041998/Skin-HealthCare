@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const productNotesController = require('../../controllers/user/productNotes');
-
+const userVerify = require('../../middlewares/userVerify');
 
 /**
  * @swagger
@@ -53,7 +53,7 @@ const productNotesController = require('../../controllers/user/productNotes');
    *         description: Server Error
    *         content-type: application/json
    */
-router.post('/product-notes', productNotesController.productNotes);
+router.post('/product-notes', userVerify, productNotesController.productNotes);
 
 /**
  * @swagger
@@ -84,7 +84,7 @@ router.post('/product-notes', productNotesController.productNotes);
  *         description: Server Error
  *         content-type: application/json
  */
-router.get('/product-notes', productNotesController.getAllProductNotes);
+router.get('/product-notes', userVerify, productNotesController.getAllProductNotes);
 
 /**
  * @swagger
@@ -135,7 +135,7 @@ router.get('/product-notes', productNotesController.getAllProductNotes);
  *         description: Server Error
  *         content-type: application/json
  */
-router.put('/product-notes/:id', productNotesController.updateByIdProductNotes);
+router.put('/product-notes/:id', userVerify, productNotesController.updateByIdProductNotes);
 
 /**
  * @swagger
@@ -167,7 +167,7 @@ router.put('/product-notes/:id', productNotesController.updateByIdProductNotes);
  *         description: Server Error
  *         content-type: application/json
  */
-router.get('/product-note/:user_product_id', productNotesController.getByUserProductIdProductNotes);
+router.get('/product-note/:user_product_id', userVerify, productNotesController.getByUserProductIdProductNotes);
 
 /**
  * @swagger
@@ -203,7 +203,7 @@ router.get('/product-note/:user_product_id', productNotesController.getByUserPro
  *         description: Server Error
  *         content-type: application/json
  */
-router.get('/product-notes/:id', productNotesController.getByIdProductNotes);
+router.get('/product-notes/:id', userVerify, productNotesController.getByIdProductNotes);
 
 
 

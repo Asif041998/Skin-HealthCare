@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const Speakers = require("../../controllers/admin/speakers");
 const adminVerify = require("../../middlewares/adminVerify");
-
+const UserAdminVerify = require("../../middlewares/userAdminVerify");
 
 
 /**
@@ -75,7 +75,7 @@ router.post("/speakers", adminVerify, Speakers.speakers);
  *         description: Server Error
  *         content-type: application/json
  */
-router.get("/speakers", Speakers.getAllSpeakers);
+router.get("/speakers", UserAdminVerify, Speakers.getAllSpeakers);
 
 /**
  * @swagger
@@ -111,7 +111,7 @@ router.get("/speakers", Speakers.getAllSpeakers);
  *         description: Server Error
  *         content-type: application/json
  */
-router.get("/speakers/:id", Speakers.getByIdSpeakers);
+router.get("/speakers/:id", UserAdminVerify, Speakers.getByIdSpeakers);
 
 /**
    * @swagger

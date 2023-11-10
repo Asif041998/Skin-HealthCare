@@ -13,10 +13,10 @@ exports.routineNotes = async (req, res) => {
       return res.status(400).send({ error: error.details[0].message });
     }
 
-    let { user_skin_care_routine_id, date, description } = req.body;
+    let { user_id, date, description } = req.body;
 
     const newRoutineNotes = await RoutineNotes.create({
-      user_skin_care_routine_id,
+      user_id,
       date,
       description,
     });
@@ -26,31 +26,30 @@ exports.routineNotes = async (req, res) => {
       newRoutineNotes,
     });
   } catch (err) {
-    console.log(err.message);
     return res.status(400).send(err.message);
   }
 };
 
 // GET ALL THE  Routines notes DETAILS
-exports.getAllRoutineNotes = async (req, res) => {
-  try {
-    const routines = await RoutineNotes.findAll({
-      include: [
-        {
-          model: Routines,
-          as: "routine", // This should match the alias you set in the Notes model
-          attributes: ["user_id", "timeframe"],
-        },
-      ],
-    });
-    return res.status(200).json({
-      message: "Routine Notes list fetched",
-      data: routines,
-    });
-  } catch (err) {
-    return res.status(400).json({ error: err.message });
-  }
-};
+// exports.getAllRoutineNotes = async (req, res) => {
+//   try {
+//     const routines = await RoutineNotes.findAll({
+//       include: [
+//         {
+//           model: Routines,
+//           as: "routine", // This should match the alias you set in the Notes model
+//           attributes: ["user_id", "timeframe"],
+//         },
+//       ],
+//     });
+//     return res.status(200).json({
+//       message: "Routine Notes list fetched",
+//       data: routines,
+//     });
+//   } catch (err) {
+//     return res.status(400).json({ error: err.message });
+//   }
+// };
 
 //UPDATE routines notes BY ID
 exports.updateByIdRoutineNotes = async (req, res) => {
@@ -92,44 +91,44 @@ exports.updateByIdRoutineNotes = async (req, res) => {
 };
 
 //Get by ID
-exports.getByIdRoutineNotes = async (req, res) => {
-  try {
-    const routineId = req.params.id;
-    const userId = req.user.id;
+// exports.getByIdRoutineNotes = async (req, res) => {
+//   try {
+//     const routineId = req.params.id;
+//     const userId = req.user.id;
 
-    const routines = await RoutineNotes.findByPk(routineId, {
-      include: [
-        {
-          model: Routines,
-          as: "routine", // This should match the alias you set in the Notes model
-          attributes: ["user_id", "timeframe"],
-        },
-      ],
-    });
+//     const routines = await RoutineNotes.findByPk(routineId, {
+//       include: [
+//         {
+//           model: Routines,
+//           as: "routine", // This should match the alias you set in the Notes model
+//           attributes: ["user_id", "timeframe"],
+//         },
+//       ],
+//     });
 
-    if (!/^\d+$/.test(routineId)) {
-      return res.status(400).json({
-          message: "Invalid ID format",
-      });
-  }
+//     if (!/^\d+$/.test(routineId)) {
+//       return res.status(400).json({
+//           message: "Invalid ID format",
+//       });
+//   }
 
-    if (!routines) {
-      return res.status(200).json({
-        message: "Routine Notes not found",
-        data:[]
-      });
-    }
+//     if (!routines) {
+//       return res.status(200).json({
+//         message: "Routine Notes not found",
+//         data:[]
+//       });
+//     }
 
-    return res.status(200).json({
-      message: "Routine Notes details fetched",
-      data: {
-        routineNotes: routines,
-      },
-    });
-  } catch (err) {
-    return res.status(400).json({ error: err.message });
-  }
-};
+//     return res.status(200).json({
+//       message: "Routine Notes details fetched",
+//       data: {
+//         routineNotes: routines,
+//       },
+//     });
+//   } catch (err) {
+//     return res.status(400).json({ error: err.message });
+//   }
+// };
 
 
 //Get by USER ID
@@ -137,14 +136,9 @@ exports.getByUserIdRoutineNotes = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    const routines = await RoutineNotes.findByPk(userId, {
-      include: [
-        {
-          model: Routines,
-          as: "routine", // This should match the alias you set in the Notes model
-          attributes: ["user_id", "timeframe"],
-        },
-      ],
+    const routines = await RoutineNotes.findAll({
+      where: { user_id: userId },
+      attributes: { exclude: ['user_id'] } 
     });
 
     if (!/^\d+$/.test(userId)) {
@@ -172,43 +166,45 @@ exports.getByUserIdRoutineNotes = async (req, res) => {
 };
 
 
+
+
 //GET BY USER SKIN CARE ROUTINE ID
-exports.getByUserSkinCareIdRoutineNotes = async (req, res) => {
-  try {
-    const routineId = req.params.user_skin_care_routine_id;
+// exports.getByUserSkinCareIdRoutineNotes = async (req, res) => {
+//   try {
+//     const routineId = req.params.user_skin_care_routine_id;
 
-    // Check if routineId is a valid positive integer
-    if (!/^\d+$/.test(routineId)) {
-      return res.status(400).json({
-        message: "Invalid ID format",
-      });
-    }
+//     // Check if routineId is a valid positive integer
+//     if (!/^\d+$/.test(routineId)) {
+//       return res.status(400).json({
+//         message: "Invalid ID format",
+//       });
+//     }
 
-    const routines = await RoutineNotes.findAll({
-      where: { user_skin_care_routine_id: routineId }, // Fix the 'where' condition
-      include: [
-        {
-          model: Routines,
-          as: "routine", // This should match the alias you set in the Notes model
-          attributes: ["user_id", "timeframe"],
-        },
-      ],
-    });
+//     const routines = await RoutineNotes.findAll({
+//       where: { user_skin_care_routine_id: routineId }, // Fix the 'where' condition
+//       include: [
+//         {
+//           model: Routines,
+//           as: "routine", // This should match the alias you set in the Notes model
+//           attributes: ["user_id", "timeframe"],
+//         },
+//       ],
+//     });
 
-    if (!routines || routines.length === 0) {
-      return res.status(200).json({
-        message: "Routine Notes not found",
-        data:[]
-      });
-    }
+//     if (!routines || routines.length === 0) {
+//       return res.status(200).json({
+//         message: "Routine Notes not found",
+//         data:[]
+//       });
+//     }
 
-    return res.status(200).json({
-      message: "Routine Notes details fetched",
-      data: {
-        routineNotes: routines,
-      },
-    });
-  } catch (err) {
-    return res.status(400).json({ error: err.message });
-  }
-};
+//     return res.status(200).json({
+//       message: "Routine Notes details fetched",
+//       data: {
+//         routineNotes: routines,
+//       },
+//     });
+//   } catch (err) {
+//     return res.status(400).json({ error: err.message });
+//   }
+// };

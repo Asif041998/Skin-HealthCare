@@ -3,6 +3,8 @@ const Collaborator = require('../../models/admin/collaborators');
 const ValidateId = require('../../services/exceptionHandling');
 const collaboratorPostValidation = require('../../validations/admin/collaborators/collaboratorsPostValidation');
 const collaboratorPutValidation = require('../../validations/admin/collaborators/collaboratorsPutvalidation');
+const Verily = require("../../models/admin/verilyStudy");
+const con = require('../../database/connection');
 
 // CREATE COLLABORATORS
 exports.createCollaborators = async (req, res) => {
@@ -123,6 +125,7 @@ exports.getCollaboratorsById = async (req, res) => {
 exports.deleteCollaborators = async (req, res) => {
     try {
         const id = req.params.id;
+
         const exceptionResult = await ValidateId(id);
         if (exceptionResult)
             return res.status(400).json(exceptionResult);
@@ -132,6 +135,7 @@ exports.deleteCollaborators = async (req, res) => {
         if (!collaborator) {
             return res.status(200).json({ message: 'Collaborator not found', data: [] });
         }
+        await Verily.destroy({ where: { collaborator_id: id } });
         await collaborator.destroy();
 
         return res.status(200).json({

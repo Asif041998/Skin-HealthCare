@@ -198,7 +198,6 @@ router.put('/products/:id', userVerify, ProductController.updateProducts);
  */
 router.get('/product/:id', userVerify, ProductController.getByIdProducts);
 
-
 /**
  * @swagger
  * /api/v1/products/{user_id}:

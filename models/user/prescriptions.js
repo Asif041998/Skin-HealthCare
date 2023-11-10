@@ -14,7 +14,7 @@ const Prescriptions = sequelize.define("user_prescriptions", {
   },
   provider: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   reason: {
     type: DataTypes.STRING,
@@ -27,6 +27,10 @@ const Prescriptions = sequelize.define("user_prescriptions", {
   visit_date: {
     type: DataTypes.DATE,
     allowNull: false,
+  },
+  status: {
+    type: DataTypes.ENUM('current', 'past'),
+    defaultValue: 'current', // Set the default value to 'current'
   }
 },{
   freezeTableName: true

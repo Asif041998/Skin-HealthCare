@@ -87,7 +87,7 @@ router.post('/meditations',adminVerify, Meditation.meditation);
  *         description: Server Error
  *         content-type: application/json
  */
-router.get('/meditation/:id', Meditation.getByIdMeditations);
+router.get('/meditation/:id', UserAdminVerify, Meditation.getByIdMeditations);
 
 // /**
 //  * @swagger

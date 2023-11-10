@@ -5,16 +5,17 @@ const treatmentPutValidation = (data) => {
         user_id: Joi.number().integer(),
         name: Joi.string().min(3)
             .max(50)
-            .regex(/^[A-Za-z][A-Za-z\s\-.'"",']+$/)
+            .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
             .trim()
             .messages({
-                "string.base": "Name must be a string",
+                "string.empty" : "Please enter a Treatment Name",
+                "string.base": "Treatment Name must be a string",
                 "string.pattern.base":
-                    "Name can only contain alphabets ",
+                    "Treatment Name can only contain alphabets ",
             }),
         description: Joi.string()
             .min(5)
-            .regex(/^[A-Za-z][A-Za-z0-9\s.,''""()\S]*$/)
+            .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
             .trim()
             .messages({
                 "string.base": "Description must be a string",

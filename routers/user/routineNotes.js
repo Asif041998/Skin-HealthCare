@@ -77,7 +77,7 @@ const userVerify = require('../../middlewares/userVerify')
  *         description: Server Error
  *         content-type: application/json
  */
-  router.get('/routine-notes',userVerify, routineNotesController.getAllRoutineNotes);
+  // router.get('/routine-notes',userVerify, routineNotesController.getAllRoutineNotes);
 
     /**
    * @swagger
@@ -158,7 +158,7 @@ const userVerify = require('../../middlewares/userVerify')
  *         description: Server Error
  *         content-type: application/json
  */
-  router.get('/routine-note/:id',userVerify, routineNotesController.getByIdRoutineNotes);
+  // router.get('/routine-note/:id',userVerify, routineNotesController.getByIdRoutineNotes);
 
 
 //       /**
@@ -269,6 +269,6 @@ const userVerify = require('../../middlewares/userVerify')
  *         description: Server Error
  *         content-type: application/json
  */
-  router.get('/routine-notes',userVerify, routineNotesController.getByUserIdRoutineNotes);
+  // router.get('/routine-notes',userVerify, routineNotesController.getByUserIdRoutineNotes);
 
   module.exports = router;

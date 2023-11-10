@@ -10,26 +10,29 @@ const productPostValidation = (data) => {
             }),
         name: Joi.string().min(3)
             .max(50)
-            .regex(/^[A-Za-z][A-Za-z\s\-']+$/)
+            // .regex(/^[A-Za-z][A-Za-z\s\-']+$/)
+            .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
             .required()
             .trim()
             .messages({
-                "string.base": "Name must be a string",
+                "string.empty" : "Please enter the Product Name",
+                "string.base": "Product Name must be a string",
                 "string.pattern.base":
-                    "Name can only contain a combination of alphabets and numbers",
+                    "Product Name can only contain a combination of alphabets and numbers",
             }),
         brand: Joi.string().min(3)
             .max(50)
-            .regex(/^[A-Za-z][A-Za-z\s\-']+$/)
+            .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
             .trim()
             .messages({
+                "string.empty" : "Please enter the Brand Name",
                 "string.base": "Brand name must be a string",
                 "string.pattern.base":
                     "Brand name can only contain a combination of alphabets and numbers",
             }),
         description: Joi.string()
             .min(5)
-            .regex(/^[A-Za-z][A-Za-z0-9\s\S]*$/)
+            .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
             .trim()
             .messages({
                 "string.base": "Description must be a string",
@@ -39,25 +42,28 @@ const productPostValidation = (data) => {
         purchase_location: Joi.string()
             .min(3)
             .max(100)
-            .regex(/^[A-Za-z0-9][A-Za-z0-9\s\S]*$/)
+            .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
             .trim()
             .messages({
-                "string.base": "Location must be a string",
+                "string.empty" : "Please enter the Location Purchased",
+                "string.base": "Location Purchased must be a string",
                 "string.pattern.base":
-                    "Location can only contain a combination of alphabets and numbers",
+                    "Location Purchased can only contain a combination of alphabets and numbers",
             }),
         open_date: Joi.date()
             .iso()
             .messages({
-                "date.base": "Open_date must be a date",
-                "date.format": "Open_date must be in the format YYYY-MM-DD",
+                "date.empty" : "Please enter the Open Date",
+                "date.base": "Open Date must be a date",
+                "date.format": "Open Date must be in the format YYYY-MM-DD",
             }),
         product_type_id: Joi.number()
             .integer()
             .required()
             .messages({
-                "number.base": "Product_type must be a number",
-                "number.integer": "Product_type must be an integer",
+                "number.base": "Please choose Product Type",
+                "number.integer": "Please choose Product Type",
+
             }),
         price: Joi.number()
             .precision(2) 
@@ -85,25 +91,27 @@ const productPutValidation = (data) => {
             }),
         name: Joi.string().min(3)
             .max(50)
-            .regex(/^[A-Za-z][A-Za-z\s\-']+$/)
+            .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
             .trim()
             .messages({
-                "string.base": "Name must be a string",
+                "string.empty" :"Please enter a Product Name",
+                "string.base": "Product Name must be a string",
                 "string.pattern.base":
-                    "Name can only contain a combination of alphabets and numbers",
+                    "Product Name can only contain a combination of alphabets and numbers",
             }),
         brand: Joi.string().min(3)
             .max(50)
-            .regex(/^[A-Za-z][A-Za-z\s\-']+$/)
+            .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
             .trim()
             .messages({
+                "string.empty" :"Please enter a Brand Name",
                 "string.base": "Brand name must be a string",
                 "string.pattern.base":
                     "Brand name can only contain a combination of alphabets and numbers",
             }),
         description: Joi.string()
             .min(5)
-            .regex(/^[A-Za-z][A-Za-z0-9\s\S]*$/)
+            .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
             .trim()
             .messages({
                 "string.base": "Description must be a string",
@@ -113,12 +121,13 @@ const productPutValidation = (data) => {
         purchase_location: Joi.string()
             .min(3)
             .max(100)
-            .regex(/^[A-Za-z0-9][A-Za-z0-9\s\S]*$/)
+            .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
             .trim()
             .messages({
-                "string.base": "Location must be a string",
+                "string.empty" : "Please enter the Location Purchased",
+                "string.base": "Location Purchased must be a string",
                 "string.pattern.base":
-                    "Location can only contain a combination of alphabets and numbers",
+                    "Location Purchased can only contain a combination of alphabets and numbers",
             }),
         open_date: Joi.date()
             .iso()
@@ -129,8 +138,8 @@ const productPutValidation = (data) => {
         product_type_id: Joi.number()
             .integer()
             .messages({
-                "number.base": "Product_type must be a number",
-                "number.integer": "Product_type must be an integer",
+                "number.base": "Please choose Product Type",
+                "number.integer": "Please choose Product Type",
             }),
         price: Joi.number()
             .precision(2) 

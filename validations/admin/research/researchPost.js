@@ -4,8 +4,9 @@ const researchValidationsPost = (data) => {
   const Schema = Joi.object({
     title: Joi.string()
       .trim()
-      .regex(/^(?=.*[A-Za-z])[A-Za-z0-9\s.,?''":;( )\[\]{}]+$/)
+      .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
       .messages({
+        "string.empty" : "Please enter the Title",
         "string.base": "Title must be a string",
         "string.pattern.base":
           "Title can only contain combination of alphabets and numbers",
@@ -13,23 +14,26 @@ const researchValidationsPost = (data) => {
       .required(),
     description: Joi.string()
       .trim()
-      .regex(/^[A-Za-z0-9][A-Za-z0-9\s\S]*$/)
+      .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
       .messages({
+        "string.empty" : "Please enter the Description",
         "string.base": "Description must be a string",
         "string.pattern.base":
           "Description can only contain combination of alphabets and numbers",
       }),
     impact: Joi.string()
       .trim()
-      .regex(/^[A-Za-z0-9][A-Za-z0-9\s\S]*$/)
+      .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
       .messages({
+        "string.empty" : "Please enter Making an Impact",
         "string.base": "Making an Impact must be a string",
       })
       .required(),
     works: Joi.string()
       .trim()
-      .regex(/^[A-Za-z0-9][A-Za-z0-9\s\S]*$/)
-      .messages({
+      .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
+      .messages({        
+        "string.empty" : "Please enter the How it Works",
         "string.base": "How it works must be a string",
       })
   });

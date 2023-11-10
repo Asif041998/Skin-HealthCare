@@ -98,14 +98,17 @@ exports.changePassword = async (req, res) => {
     }
 
     const currentPassword = req.body.currentPassword;
+    const newPassword = req.body.newPassword;
+    const confirmPassword = req.body.confirmPassword;
+
+    if (currentPassword === newPassword) {
+      return res.status(400).json({ message: 'New password must be different from the current password.' });
+    }
 
     const passwordMatch = await bcrypt.compare(currentPassword, admin.password);
     if (!passwordMatch) {
       return res.status(400).json({ message: 'Current Password not correct.' });
     }
-
-    const newPassword = req.body.newPassword;
-    const confirmPassword = req.body.confirmPassword;
 
     if (newPassword !== confirmPassword) {
       return res.status(400).json({ message: 'Passwords do not match.' });
@@ -125,6 +128,8 @@ exports.changePassword = async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 };
+``
+
 
 //ADMIN LOGOUT
 exports.logOutAdmin = async (req, res) => {

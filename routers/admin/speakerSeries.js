@@ -89,7 +89,7 @@ router.post('/speaker-series', adminVerify, Speaker.speakerSeries);
  *         description: Server Error
  *         content-type: application/json
  */
-router.get('/speakers-series/:id', Speaker.getByIdSpeakerSeries);
+router.get('/speakers-series/:id', UserAdminVerify, Speaker.getByIdSpeakerSeries);
 
 /**
  * @swagger

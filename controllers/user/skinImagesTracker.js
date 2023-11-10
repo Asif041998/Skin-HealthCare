@@ -1,38 +1,33 @@
 const SkinImagestracker = require("../../models/user/skinImagesTracker");
-const skinPostValidation = require('../../validations/user/skinImages/skinPost');
-const skinPutValidation = require('../../validations/user/skinImages/skinPut');
+const skinTrackerPostValidation = require('../../validations/user/skinImagesTracker/skinTrackerPost');
+const skinTrackerPutValidation = require('../../validations/user/skinImagesTracker/skinTrackerPut');
 const ValidateId = require('../../services/exceptionHandling');
 
 // ADD SKIN-IMAGES
 exports.skinImagesTracker = async (req, res) => {
     try {
 
-        // const { error } = skinPostValidation(req.body);
-        // if (error)
-        //     return res.status(400).send({ error: error.details[0].message });
+        const { error } = skinTrackerPostValidation(req.body);
+        if (error)
+            return res.status(400).send({ error: error.details[0].message });
+
         let userId = req.user.id;
-        let { user_id, date, file_name } = req.body;
+        let { user_id, image_date, file_name } = req.body;
 
         const exist = await SkinImagestracker.findOne({ where: { file_name: file_name, user_id: userId } });
         if (exist)
             return res.status(409).json({
                 message: "Skin-image tracker already exists",
-                skinImagesTracker: []
             });
 
-        // const skinImages = await SkinImagestracker.create({
-        //     user_id,
-        //     date,
-        //     file_name,
-        // });
-
-        const skinImagesTracker ={
+        const skinImagesTracker = await SkinImagestracker.create({
             user_id,
-            date,
+            image_date,
             file_name,
-        };
+        });
+
         return res.status(201).json({
-            message: "Skin-images tracker added successfully",
+            message: "Skin image added successfully",
             skinImagesTracker
         });
 
@@ -45,7 +40,7 @@ exports.skinImagesTracker = async (req, res) => {
 // GET ALL THE  SKIN-IMAGES DETAILS
 exports.getAllSkinImages = async (req, res) => {
     try {
-        const skinImages = await SkinImagestracker.findAll();
+        const skinImages = await SkinImagestracker.findAll({ order: [['createdAt', 'DESC']] });
         return res.status(200).json({
             message: "Skin-images list fetched",
             data: skinImages,
@@ -59,9 +54,9 @@ exports.getAllSkinImages = async (req, res) => {
 exports.updateSkinImagesTracker = async (req, res) => {
     try {
 
-        // const { error } = skinPutValidation(req.body);
-        // if (error)
-        //     return res.status(400).send({ error: error.details[0].message });
+        const { error } = skinTrackerPutValidation(req.body);
+        if (error)
+            return res.status(400).send({ error: error.details[0].message });
 
         const id = req.params.id;
         const updatedData = req.body;
@@ -87,7 +82,7 @@ exports.updateSkinImagesTracker = async (req, res) => {
         const updatedSkinImage = await SkinImagestracker.findByPk(id);
 
         return res.status(200).json({
-            message: "Skin-image tracker updated successfully",
+            message: "Skin image edited successfully",
             data: updatedSkinImage,
         });
     } catch (err) {
@@ -119,49 +114,20 @@ exports.getAllSkinImagesById = async (req, res) => {
     }
 };
 
-// GET SKIN-IMAGES BY GOAL TYPE
-exports.getAllSkinImagesByUserIdAndGoalType = async (req, res) => {
-    try {
-        const user_id = req.params.user_id;
-        const goalType = req.params.goal_type;
-
-        const exceptionResult = await ValidateId(user_id);
-        if (exceptionResult)
-            return res.status(400).json(exceptionResult);
-
-        if (goalType !== '2' && goalType !== '1')
-            return res.status(400).json({ message: "Goal type can be 1 or 2 only" });
-
-        const skinImages = await SkinImagestracker.findAll({ where: { user_id: user_id, goal_type: goalType } });
-
-        if (skinImages.length === 0)
-            return res.status(200).json({
-                message: "Skin-images tracker not found",
-                data: []
-            });
-
-        return res.status(200).json({
-            message: "Skin-images tracker details fetched",
-            data: skinImages
-        });
-    } catch (err) {
-        return res.status(400).json({ error: err.message });
-    }
-};
-
 // GET SKIN-IMAGES BY USER_ID
 exports.getAllSkinImagesByUserId = async (req, res) => {
     try {
         const userParamsId = req.params.user_id;
         const userId = req.user.id;
-
+         
         const exceptionResult = await ValidateId(userId);
         if (exceptionResult)
             return res.status(400).json(exceptionResult);
 
         if (userId == userParamsId) {
-
-            const skinImages = await SkinImagestracker.findAll({ where: { user_id: userParamsId } });
+            const skinImages = await SkinImagestracker.findAll({
+                where: { user_id: userParamsId },
+            });
 
             if (skinImages.length === 0) {
                 return res.status(200).json({
@@ -172,7 +138,7 @@ exports.getAllSkinImagesByUserId = async (req, res) => {
 
             const organizedImages = {};
             skinImages.forEach((image) => {
-                const date = new Date(image.date);
+                const date = new Date(image.image_date);
                 const year = date.getFullYear();
                 const month = date.toLocaleString('default', { month: 'long' });
 
@@ -184,23 +150,32 @@ exports.getAllSkinImagesByUserId = async (req, res) => {
                     organizedImages[year][month] = [];
                 }
 
-                organizedImages[year][month].push(image.file_name);
+                organizedImages[year][month].push({
+                    file_name: image.file_name,
+                    image_date: date,
+                });
             });
 
             const response = {
                 years: Object.keys(organizedImages).map((year) => ({
                     year: parseInt(year),
-                    months: Object.keys(organizedImages[year]).map((month) => ({
-                        month,
-                        data: {
-                            images: organizedImages[year][month],
-                        },
-                    })),
+                    months: Object.keys(organizedImages[year])
+                        .sort((a, b) => new Date(b + ' 1, 2000') - new Date(a + ' 1, 2000'))
+                        .map((month) => ({
+                            month,
+                            data: {
+                                images: organizedImages[year][month]
+                                    .sort((a, b) => b.image_date - a.image_date)
+                                    .map((image) => image.file_name),
+                            },
+                        })),
                 })),
             };
 
+            response.years.sort((a, b) => b.year - a.year);
+
             return res.status(200).json({
-                message: "Skin-images trcaker details fetched",
+                message: "Skin-images tracker details fetched",
                 data: response
             });
         } else {
@@ -213,3 +188,4 @@ exports.getAllSkinImagesByUserId = async (req, res) => {
         return res.status(400).json({ error: err.message });
     }
 };
+

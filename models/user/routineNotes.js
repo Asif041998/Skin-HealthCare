@@ -1,6 +1,5 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../../database/connection");
-const Routines = require("../../models/user/routines");
 
 const RoutineNotes = sequelize.define("skin_care_routine_notes", {
   id: {
@@ -8,7 +7,7 @@ const RoutineNotes = sequelize.define("skin_care_routine_notes", {
     primaryKey: true,
     autoIncrement: true,
   },
-  user_skin_care_routine_id: {
+  user_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
@@ -22,11 +21,6 @@ const RoutineNotes = sequelize.define("skin_care_routine_notes", {
   },
 }, {
   freezeTableName: true
-});
-
-RoutineNotes.belongsTo(Routines, {
-  foreignKey: "user_skin_care_routine_id",
-  as: "routine", 
 });
 
 module.exports = RoutineNotes;

@@ -25,7 +25,6 @@ const Verily = sequelize.define('study_participants', {
     email: {
         type: DataTypes.STRING,
         allowNull: true,
-        // unique: true,
     },
     image_url: {
         type: DataTypes.STRING,

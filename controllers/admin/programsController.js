@@ -14,7 +14,6 @@ exports.programs = async (req, res) => {
             if (existingProgram) {
                 return res.status(409).json({ message: "Program event already exists", });
             }
-            // let responseUrl = await uploads(image_url);
 
             const createdProgram = await Programs.create({
                 name,
@@ -30,7 +29,6 @@ exports.programs = async (req, res) => {
             message: 'Programs uploaded successfully',
             data,
         });
-
     }
     catch (err) {
         return res.status(400).json({ error: err.message });

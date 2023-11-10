@@ -83,6 +83,36 @@ exports.updateByIdResearch = async (req, res) => {
 };
 
 //GET ALL THE DATA 
+// exports.getAllResearch = async (req, res) => {
+//   const filePath = path.join(__dirname, "research.json");
+
+//   let researchData = {};
+//   try {
+//     const fileContent = fs.readFileSync(filePath, "utf8");
+//     researchData = JSON.parse(fileContent);
+//   } catch (error) {
+//     return res.status(404).json({ message: "Not Found" });
+//   }
+
+//   const researchArray = Object.keys(researchData).map(key => {
+//     const researchItem = researchData[key];
+//     if (researchItem && researchItem.id) {
+//       return {
+//         id: researchItem.id,
+//         title: researchItem.title,
+//         description: researchItem.description,
+//         impact: researchItem.impact,
+//         works: researchItem.works
+//       };
+//     }
+//     return null; 
+//   });
+
+//   const filteredResearchArray = researchArray.filter(item => item !== null);
+
+//   res.status(200).json(filteredResearchArray);
+// };
+
 exports.getAllResearch = async (req, res) => {
   const filePath = path.join(__dirname, "research.json");
 
@@ -94,17 +124,30 @@ exports.getAllResearch = async (req, res) => {
     return res.status(404).json({ message: "Not Found" });
   }
 
-  // Convert the researchData object into an array of research objects
-  const researchArray = Object.keys(researchData).map(key => ({
-    id: researchData[key].id,
-    title: researchData[key].title,
-    description: researchData[key].description,
-    impact: researchData[key].impact,
-    works: researchData[key].works
-  }));
+  const researchArray = Object.keys(researchData).map(key => {
+    const researchItem = researchData[key];
+    if (researchItem && researchItem.id) {
+      return {
+        id: researchItem.id,
+        title: researchItem.title,
+        description: researchItem.description,
+        impact: researchItem.impact,
+        works: researchItem.works
+      };
+    }
+    return null;
+  });
 
-  res.status(200).json(researchArray);
+  const filteredResearchArray = researchArray.filter(item => item !== null);
+
+  const response = {
+    message: "Research data fetched successfully",
+    data: filteredResearchArray
+  };
+
+  res.status(200).json(response);
 };
+
 
 //GET Research by ID API
 exports.getByIdResearch = async (req, res) => {

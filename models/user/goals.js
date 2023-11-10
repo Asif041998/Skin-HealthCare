@@ -25,7 +25,7 @@ const Goals = sequelize.define("user_goals", {
   },
   reached_date: {
     type: DataTypes.DATE,
-    allowNull: false,
+    allowNull: true,
   },
 }, {
   freezeTableName: true

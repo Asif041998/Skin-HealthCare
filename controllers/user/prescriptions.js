@@ -11,7 +11,7 @@ exports.prescriptions = async (req, res) => {
       return res.status(400).send({ error: error.details[0].message });
     }
 
-    let { user_id, provider, reason, diagnosis, visit_date } = req.body;
+    let { user_id, provider, reason, diagnosis, visit_date, status } = req.body;
 
     const newPrescriptions = await Prescriptions.create({
       user_id,
@@ -19,6 +19,7 @@ exports.prescriptions = async (req, res) => {
       reason,
       diagnosis,
       visit_date,
+      status,
     });
 
     return res.status(201).json({
@@ -27,7 +28,6 @@ exports.prescriptions = async (req, res) => {
     });
 
   } catch (err) {
-    console.log(err.message)
     return res.status(400).send(err.message);
   }
 };
@@ -126,8 +126,8 @@ exports.getByUserIdPrescriptions = async (req, res) => {
        attributes: { exclude: ['user_id'] }});
 
     if (!prescription) {
-      return res.status(404).json({
-        message: "Prescriptions not found",
+      return res.status(200).json({
+        message: "Prescriptions not found", data:[]
       });
     }
 

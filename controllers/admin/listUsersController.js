@@ -49,12 +49,10 @@ exports.listUsers = async (req, res) => {
   }
 };
 
-
 //GET THE DETAILS OF THE USER BY ID
 exports.getUserById = async (req, res) => {
   try {
-    console.log(req.user);
-
+   
     let user;
 
     if(req.user.role === "admin"){
@@ -73,9 +71,3 @@ exports.getUserById = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
-
-
-
-
-
-

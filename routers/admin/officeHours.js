@@ -92,7 +92,7 @@ router.post('/office-hours', adminVerify, Office.officeHours);
  *         description: Server Error
  *         content-type: application/json
  */
-router.get('/office-hour/:id', Office.getByIdOfficeHours);
+router.get('/office-hour/:id', UserAdminVerify, Office.getByIdOfficeHours);
 
 /**
  * @swagger

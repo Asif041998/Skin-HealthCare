@@ -1,7 +1,6 @@
 const con = require("../../database/connection");
 const Products = require("../../models/user/products");
 const Products_Types = require("../../models/user/productTypes");
-const RoutineNotes = require("../../models/user/routineNotes");
 const Routines = require("../../models/user/routines");
 const Treatments = require("../../models/user/treatments");
 const userSkinCareRoutineProducts = require("../../models/user/userSkinCareRoutineProducts");
@@ -9,7 +8,7 @@ const userSkinCareRoutineTreatments = require("../../models/user/userSkinCareRou
 const routinePostValidation = require("../../validations/user/routines/routinePost");
 const routinePutValidation = require("../../validations/user/routines/routinePut");
 
-// FOR Routines
+// POST ROUTINES 
 exports.routines = async (req, res) => {
   try {
     const { error } = routinePostValidation(req.body);
@@ -22,30 +21,44 @@ exports.routines = async (req, res) => {
       timeframe,
     });
 
-    const routines = await Routines.findAll();
-    const routineId = routines[routines.length - 1].id;
+    const routineId = routine.id;
+    
+    let routinesProduct;
+    let routinesTreatment;
 
-    const routinesProduct = await Promise.all(
-      products.map(async (result) => {
-        const createProduct = await userSkinCareRoutineProducts.create({
-          user_skin_care_routine_id: routineId,
-          user_product_id: result,
-        });
-        return createProduct;
-      })
-    );
+    if (timeframe === 'Morning' || timeframe === 'Evening') {
+      routinesProduct = await Promise.all(
+        products.map(async (result) => {
+          const createProduct = await userSkinCareRoutineProducts.create({
+            user_skin_care_routine_id: routineId,
+            user_product_id: result,
+          });
+          return createProduct;
+        })
+      );
+    } else {
+      // For other timeframes, add both products and treatments
+      routinesProduct = await Promise.all(
+        products.map(async (result) => {
+          const createProduct = await userSkinCareRoutineProducts.create({
+            user_skin_care_routine_id: routineId,
+            user_product_id: result,
+          });
+          return createProduct;
+        }));
 
-    const routinesTreatment = await Promise.all(
-      treatments.map(async (result) => {
-        const createTreatment = await userSkinCareRoutineTreatments.create({
-          user_skin_care_routine_id: routineId,
-          user_facial_treatment_id: result,
-        });
-        return createTreatment;
-      })
-    );
+      routinesTreatment = await Promise.all(
+        treatments.map(async (result) => {
+          const createTreatment = await userSkinCareRoutineTreatments.create({
+            user_skin_care_routine_id: routineId,
+            user_facial_treatment_id: result,
+          });
+          return createTreatment;
+        }));
+    }
 
     const responseObject = {
+      id: routineId,
       user_id,
       timeframe,
       product: routinesProduct,
@@ -56,15 +69,15 @@ exports.routines = async (req, res) => {
       data: responseObject,
     });
   } catch (err) {
-    console.log(err.message);
     return res.status(400).send(err.message);
   }
 };
 
-//GET BY USER ID
+
+//GET BY USER ID ROUTINES
 exports.getByUserIdRoutines = async (req, res) => {
   try {
-    const userId = req.params.user_id;
+    const userId = req.user.id;
 
     if (!/^\d+$/.test(userId)) {
       return res.status(400).json({
@@ -76,7 +89,7 @@ exports.getByUserIdRoutines = async (req, res) => {
       where: {
         user_id: userId,
       },
-      order: [["createdAt", "DESC"]],
+      order: [["timeframe", "ASC"], ["createdAt", "DESC"]],
     });
 
     const responseObject = [];
@@ -129,21 +142,24 @@ exports.getByUserIdRoutines = async (req, res) => {
         ],
       });
 
-      const routineNotes = await RoutineNotes.findAll({
-        where: {
-          user_skin_care_routine_id: userSkinCareRoutineId,
-        }
-      });
-
       responseObject.push({
         id: routine.id,
         user_id: routine.user_id,
         timeframe: routine.timeframe,
         products,
-        treatments,
-        routineNotes,
+        treatments, 
       });
     }
+
+    responseObject.sort((a, b) => {
+      const timeframeOrder = {
+        Morning: 1,
+        Evening: 2,
+        Weekly: 3,
+        Monthly: 4,
+      };
+      return timeframeOrder[a.timeframe] - timeframeOrder[b.timeframe];
+    });
 
     return res.status(200).json({
       message: "Routines list fetched",
@@ -153,6 +169,8 @@ exports.getByUserIdRoutines = async (req, res) => {
     return res.status(400).json({ error: err.message });
   }
 };
+
+
 
 //UPDATE Routines BY ID
 exports.updateByIdRoutines = async (req, res) => {
@@ -277,97 +295,5 @@ exports.updateByIdRoutines = async (req, res) => {
     });
   } catch (err) {
     return res.status(400).json({ error: err.message });
-  }
-};
-
-//GET BY ID
-exports.getByIdRoutines = async (req, res) => {
-  try {
-    const Id = req.params.id;
-
-    if (!/^\d+$/.test(Id)) {
-      return res.status(400).json({
-        message: "Invalid ID format",
-      });
-    }
-
-    const routine = await Routines.findByPk(Id);
-
-    if (!routine) {
-      return res.status(200).json({
-        message: "Routine not found",
-        data: []
-      });
-    }
-
-    const userSkinCareRoutineId = routine.id;
-
-    const products = await userSkinCareRoutineProducts.findAll({
-      where: {
-        user_skin_care_routine_id: userSkinCareRoutineId,
-      },
-      order: [["createdAt", "DESC"]],
-      include: [
-        {
-          model: Products,
-          as: "product",
-          attributes: [
-            "brand",
-            "name",
-            "description",
-            "purchase_location",
-            "image",
-            "open_date",
-            "product_type_id",
-            "price",
-            "expiration_date",
-          ],
-          include: [
-            {
-              model: Products_Types,
-              as: "product_type",
-              attributes: ["name", "expiration_duration_days"],
-            },
-          ],
-        },
-      ],
-    });
-
-    const treatments = await userSkinCareRoutineTreatments.findAll({
-      where: {
-        user_skin_care_routine_id: userSkinCareRoutineId,
-      },
-      order: [["createdAt", "DESC"]],
-      include: [
-        {
-          model: Treatments,
-          as: "treatment",
-          attributes: ["name", "description"],
-        },
-      ],
-    });
-
-    const routineNotes = await RoutineNotes.findAll({
-      where: {
-        user_skin_care_routine_id: userSkinCareRoutineId,
-      },
-      order: [["createdAt", "DESC"]],
-    });
-
-    const responseObject = {
-      id: routine.id,
-      user_id: routine.user_id,
-      timeframe: routine.timeframe,
-      products,
-      treatments,
-      routineNotes,
-    };
-
-    return res.status(200).json({
-      message: "Routine fetched",
-      data: responseObject,
-    });
-  } catch (err) {
-    return res.status(500).json({ error: err.message });
   }
 };

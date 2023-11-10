@@ -9,7 +9,7 @@ const speakerSeriesValidationsPost = (data) => {
     title: Joi.string()
       .trim()
       .required()
-      .regex(/^[A-Za-z0-9\s.,?''":;( )\[\]{}\-&!]+$/)
+      .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
       .messages({
         'string.base': 'Title must be a string',
         'string.pattern.base': 'Title can contain a combination of alphabets, numbers, and special characters, but must include at least one alphabet character',

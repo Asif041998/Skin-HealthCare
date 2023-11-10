@@ -14,17 +14,19 @@ const goalPutValidation = (data) => {
     purpose: Joi.string()
       .min(3)
       .max(50)
-      .regex(/^[A-Za-z0-9][A-Za-z0-9\s\S]*$/)
+      .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
       .trim()
       .messages({
-        "string.base": "Purpose must be a string",
+        "string.base": "Skin Concern Name must be a string",
         "string.pattern.base":
-          "Purpose can only contain a combination of alphabets and numbers",
+          "Skin Concern Name can only contain a combination of alphabets and numbers",
+          "string.empty": "Please enter the Skin Concern Name",
       }),
     start_date: Joi.date().iso().custom(customStartDateValidation).messages({
-      "date.base": "Start_date must be a date",
-      "date.format": "Start_date must be in the format YYYY-MM-DD",
-      "date.min": "Start_date cannot be in the past",
+      "date.base": "Start Date must be a date",
+      "date.format": "Start Date must be in the format YYYY-MM-DD",
+      "date.min": "Start Date cannot be in the past",
+      "date.empty" : "Please enter the Start Date",
     }),
     reached_date: Joi.date()
       .iso()
@@ -34,9 +36,9 @@ const goalPutValidation = (data) => {
         "date.format": "Reached_date must be in the format YYYY-MM-DD",
         "date.min": "Reached_date cannot be before the start date",
       }),
-    prescriptions: Joi.array().items(Joi.number()).min(1),
-    treatments: Joi.array().items(Joi.number()).min(1),
-    products: Joi.array().items(Joi.number()).min(1),
+    prescriptions: Joi.array().items(Joi.number()),
+    treatments: Joi.array().items(Joi.number()),
+    products: Joi.array().items(Joi.number()),
   });
   return Schema.validate(data);
 };

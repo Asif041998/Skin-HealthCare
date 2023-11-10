@@ -5,22 +5,24 @@ const productNotesPostValidation = (data) => {
     like_note: Joi.string()
       .min(3)
       .max(500)
-      .regex(/^[A-Za-z][A-Za-z\s\-.,'""']+$/)
+      .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
       .trim()
       .messages({
-        "string.base": "like_note must be a string",
+        "string.empty" : "Please enter What I Like",
+        "string.base": "What I Like must be a string",
         "string.pattern.base":
-          "like_note can only contain a combination of alphabets and numbers",
+          "What I Like can only contain a combination of alphabets and numbers",
       }),
     dislike_note: Joi.string()
       .min(5)
       .max(500)
-      .regex(/^[A-Za-z][A-Za-z0-9\s.,''""()\S]*$/)
+      .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
       .trim()
       .messages({
-        "string.base": "dislike_note must be a string",
+        "string.empty" : "Please enter What Don't I Like",
+        "string.base": "What Don't I Like must be a string",
         "string.pattern.base":
-          "dislike_note can only contain a combination of alphabets and numbers",
+          "What Don't I Like can only contain a combination of alphabets and numbers",
       }),
     user_product_id: Joi.number().integer().required()
     .messages({

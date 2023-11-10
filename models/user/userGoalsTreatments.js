@@ -6,12 +6,12 @@ const GoalsTreatments = sequelize.define("user_goal_facial_treatments", {
   user_goal_id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
-    allowNull: false,
+    allowNull: true,
   },
   user_facial_treatment_id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
-    allowNull: false,
+    allowNull: true,
   },
 }, {
   freezeTableName: true

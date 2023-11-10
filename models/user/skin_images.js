@@ -1,28 +1,24 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../../database/connection");
 
-const SkinImages = sequelize.define("user_skin_images", {
+const SkinImages = sequelize.define("user_goal_images", {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,
   },
-  user_id: {
+  user_goal_id: {
     type: DataTypes.INTEGER,
-    primaryKey: true,
+    primaryKey: false,
   },
-  date: {
+  image_date: {
     type: DataTypes.DATE,
-    allowNull: false,
+    allowNull: true,
   },
-  file_name: {
+  image_url: {
     type: DataTypes.STRING,
     allowNull: false,
-  },
-  goal_type: {
-    type: DataTypes.INTEGER,
-    allowNull: false
-  },
+  }
 }, {
   freezeTableName: true
 });

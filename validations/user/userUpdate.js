@@ -7,17 +7,19 @@ const userPutValidation = (data) => {
     .trim()
     .regex(/^[A-Za-z\s\-.,''""']+$/)
             .messages({
-                "string.base": "Firstname must be a string",
+                "string.empty" : "Please enter the First Name",
+                "string.base": "First Name must be a string",
                 "string.pattern.base":
-                    "Firstname can only contain alphabets"
+                    "First Name can only contain alphabets"
             }),
     lastname: Joi.string().min(3).max(30)
     .trim()
     .regex(/^[A-Za-z\s\-.,''""']+$/)
             .messages({
-                "string.base": "Lastname must be a string",
+                "string.empty" : "Please enter the Last Name",
+                "string.base": "Last Name must be a string",
                 "string.pattern.base":
-                    "Lastname can only contain alphabets"
+                    "Last Name can only contain alphabets"
             }),
         state: Joi.number().max(51),
         birth_year: Joi.number(),

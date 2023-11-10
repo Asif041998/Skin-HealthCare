@@ -12,36 +12,19 @@ exports.productNotes = async (req, res) => {
       return res.status(400).send({ error: error.details[0].message });
     }
 
-    let { like_note, dislike_note, user_product_id } = req.body;
+    const { like_note, dislike_note, user_product_id } = req.body;
 
-    // Check if a record already exists for the same user and product
-    const existingNote = await ProductNotes.findOne({
-      where: { user_product_id },
+    // Create a new product note without checking for existing data
+    const createdNotes = await ProductNotes.create({
+      like_note,
+      dislike_note,
+      user_product_id,
     });
 
-    if (existingNote) {
-      // If a record already exists, update it instead of creating a new one
-      existingNote.like_note = like_note;
-      existingNote.dislike_note = dislike_note;
-      await existingNote.save();
-
-      return res.status(200).json({
-        message: "Product Notes updated successfully",
-        data: existingNote,
-      });
-    } else {
-      // If no record exists, create a new one
-      const createdNotes = await ProductNotes.create({
-        like_note,
-        dislike_note,
-        user_product_id,
-      });
-
-      return res.status(200).json({
-        message: "Product Notes added successfully",
-        data: createdNotes,
-      });
-    }
+    return res.status(200).json({
+      message: "Product Notes added successfully",
+      data: createdNotes,
+    });
   } catch (err) {
     return res.status(400).json({ error: err.message });
   }
@@ -89,6 +72,7 @@ exports.updateByIdProductNotes = async (req, res) => {
     return res.status(400).json({ error: err.message });
   }
 };
+
 
 // GET ALL THE SPEAKER SERIES Notes WITH SPEAKER DETAILS
 exports.getAllProductNotes = async (req, res) => {

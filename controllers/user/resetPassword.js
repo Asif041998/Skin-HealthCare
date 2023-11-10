@@ -21,7 +21,6 @@ exports.forgotPassword = async (req, res) => {
     const token = Math.random().toString(36).substring(7);
 
     // Update the user's reset_token in the database using Sequelize
-    console.log('token', token)
     const [updatedRows] = await User.update(
       { reset_token: token },
       { where: { email: email } }
@@ -44,7 +43,6 @@ exports.forgotPassword = async (req, res) => {
         console.error(error);
         res.status(500).json({ message: 'Error sending email.' });
       } else {
-        console.log('Email sent: ' + info.response);
         res.status(200).json({ message: 'Password reset email sent.' });
       }
     });
@@ -70,13 +68,17 @@ exports.resetPassword = async (req, res) => {
       return res.status(404).json({ message: 'User not found.' });
     }
 
+    const passwordMatchesPrevious = await bcrypt.compare(newPassword, user.password);
+    if (passwordMatchesPrevious) {
+      return res.status(400).json({ message: 'New password must be different from the previous password.' });
+    }
+
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(newPassword, salt);
 
     await User.update(
-      {password: hashedPassword,
-      reset_token: null},
-      {where: {email : user.email}}
+      { password: hashedPassword, reset_token: null },
+      { where: { email: user.email } }
     );
 
     res.status(200).json({ message: 'Password changed successfully.' });

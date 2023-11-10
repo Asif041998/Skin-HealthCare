@@ -3,6 +3,7 @@ const Products_Types = require("../../models/user/productTypes");
 const productPostValidation = require("../../validations/user/product/product");
 const productPutValidation = require("../../validations/user/product/product");
 const ValidateId = require('../../services/exceptionHandling');
+const { Op } = require('sequelize');
 
 // ADD PRODUCTS
 exports.products = async (req, res) => {
@@ -84,6 +85,19 @@ exports.updateProducts = async (req, res) => {
         const exceptionResult = await ValidateId(productId);
         if (exceptionResult)
             return res.status(400).json(exceptionResult);
+
+        if (updatedData.name) {
+            const existingProduct = await Products.findOne({
+                where: { id: { [Op.not]: productId },  name: updatedData.name, user_id: userId }
+            });
+
+            if (existingProduct) {
+                return res.status(409).json({
+                    message: "Product with the same name already exists", data: []
+                });
+            }
+
+        }
 
         const userExist = await Products.findOne({ where: { user_id: userId, id: productId } });
         if (!userExist) return res.status(200).json({ message: "There is no product with this user id", data: [] });

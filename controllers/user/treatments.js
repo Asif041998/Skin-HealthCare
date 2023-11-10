@@ -7,6 +7,7 @@ const { Op } = require('sequelize');
 // FOR Treatments
 exports.treatments = async (req, res) => {
   try {
+    let userId = req.user.id;
     const { error } = treatmentPostValidation(req.body);
     if (error) {
       return res.status(400).send({ error: error.details[0].message });
@@ -14,14 +15,13 @@ exports.treatments = async (req, res) => {
 
     let { user_id, name, description } = req.body;
 
-    // Check if a treatment with the same name already exists
     const existingTreatment = await Treatments.findOne({
-      where: { name }
+      where: { user_id: userId, name }
     });
 
     if (existingTreatment) {
       return res.status(409).json({
-        message: "Treatment with the same name already exists",
+        message: "Treatment with the same name already exists", data: []
       });
     }
 
@@ -32,7 +32,7 @@ exports.treatments = async (req, res) => {
 
     return res.status(201).json({
       message: "Treatment added successfully",
-      treatments : newTreatments
+      treatments: newTreatments
     });
   } catch (err) {
     console.error(err.message);
@@ -46,7 +46,7 @@ exports.getAllTreatments = async (req, res) => {
     const treatments = await Treatments.findAll();
     return res.status(200).json({
       message: "Treatments list fetched",
-      data:  treatments,
+      data: treatments,
     });
   } catch (err) {
     return res.status(400).json({ error: err.message });
@@ -62,6 +62,7 @@ exports.updateByIdTreatments = async (req, res) => {
     }
 
     const treatmentId = req.params.id;
+    const userId = req.user.id;
     const updatedData = req.body;
 
     if (!/^\d+$/.test(treatmentId)) {
@@ -71,12 +72,17 @@ exports.updateByIdTreatments = async (req, res) => {
     }
 
     const existingTreatment = await Treatments.findOne({
-      where: { name: updatedData.name, id: { [Op.not]: treatmentId } }
+      where: {
+        id: { [Op.not]: treatmentId }, 
+        user_id: userId,
+        name: updatedData.name,
+      },
     });
 
     if (existingTreatment) {
-      return res.status(409).json({
-        message: "Treatment with the same name already exists",
+      return res.status(400).json({
+        message: "Treatment already exists for the user",
+        data : []
       });
     }
 
@@ -109,16 +115,16 @@ exports.getByIdTreatments = async (req, res) => {
 
     if (!/^\d+$/.test(treatmentId)) {
       return res.status(400).json({
-          message: "Invalid ID format",
+        message: "Invalid ID format",
       });
-  }
+    }
     const treatments = await Treatments.findByPk(treatmentId,
-      {attributes: { exclude: ['id'] }});
+      { attributes: { exclude: ['id'] } });
 
     if (!treatments) {
       return res.status(200).json({
         message: "Treatment not found",
-        data:[]
+        data: []
       });
     }
 
@@ -139,23 +145,25 @@ exports.getByUserIdTreatments = async (req, res) => {
 
     if (req.user.id == userId) {
 
-    // Assuming you have a model called Users to query for user details
-    const treatment = await Treatments.findAll({where : {user_id : userId},
-      attributes: { exclude: ['user_id'] }});
+      // Assuming you have a model called Users to query for user details
+      const treatment = await Treatments.findAll({
+        where: { user_id: userId },
+        attributes: { exclude: ['user_id'] }
+      });
 
-    if (!treatment) {
-      return res.status(404).json({
-        message: "Treatments not found",
+      if (!treatment) {
+        return res.status(200).json({
+          message: "Treatments not found", data: []
+        });
+      }
+
+      return res.status(200).json({
+        message: "Treatments details fetched",
+        data: treatment,
       });
     }
-
-    return res.status(200).json({
-      message: "Treatments details fetched",
-      data:  treatment,
-    });
-  }
-  else
-    return res.status(403).json({"message": "Forbidden"});
+    else
+      return res.status(403).json({ "message": "Forbidden" });
   } catch (err) {
     return res.status(400).json({ error: err.message });
   }

@@ -11,7 +11,7 @@ const skinImagesTracker = sequelize.define("user_skin_images", {
         type: DataTypes.INTEGER,
         primaryKey: true,
     },
-    date: {
+    image_date: {
         type: DataTypes.DATE,
         allowNull: false,
     },

@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const routineController = require('../../controllers/user/routines');
-
+const userVerify = require('../../middlewares/userVerify');
 
 /**
  * @swagger
@@ -50,7 +50,7 @@ const routineController = require('../../controllers/user/routines');
    *         description: Server Error
    *         content-type: application/json
    */
-router.post('/routines',routineController.routines);
+router.post('/routines',userVerify, routineController.routines);
 
   // /**
   //  * @swagger
@@ -157,7 +157,7 @@ router.post('/routines',routineController.routines);
  *         description: Server Error
  *         content-type: application/json
  */
-router.put('/routines/:id', routineController.updateByIdRoutines);
+router.put('/routines/:id', userVerify, routineController.updateByIdRoutines);
 
 
 /**
@@ -194,7 +194,7 @@ router.put('/routines/:id', routineController.updateByIdRoutines);
  *         description: Server Error
  *         content-type: application/json
  */
-router.get('/routine/:id', routineController.getByIdRoutines);
+// router.get('/routine/:id', userVerify, routineController.getByIdRoutines);
 
 /**
  * @swagger
@@ -230,6 +230,6 @@ router.get('/routine/:id', routineController.getByIdRoutines);
  *         description: Server Error
  *         content-type: application/json
  */
-router.get('/routines/:user_id', routineController.getByUserIdRoutines);
+router.get('/routines/:user_id', userVerify, routineController.getByUserIdRoutines);
 
 module.exports = router;

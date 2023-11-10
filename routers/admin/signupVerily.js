@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const signupVerilyController = require('../../controllers/admin/verily');
+const userVerify = require('../../middlewares/userVerify');
 
 // Register a new user
 
@@ -54,9 +55,9 @@ const signupVerilyController = require('../../controllers/admin/verily');
    *         description: Server Error
    *         content-type: application/json
    */
-router.post('/signup/verily', signupVerilyController.registerVerilyUser);
-router.get('/signup/verily', signupVerilyController.getAllVerilyUser);
-router.get('/signup/verily/:id', signupVerilyController.getVerilyUserById);
-router.put('/signup/verily/:id', signupVerilyController.updateVerilyUser);
+router.post('/signup/verily',userVerify, signupVerilyController.registerVerilyUser);
+router.get('/signup/verily',userVerify, signupVerilyController.getAllVerilyUser);
+router.get('/signup/verily/:id', userVerify,signupVerilyController.getVerilyUserById);
+router.put('/signup/verily/:id',userVerify, signupVerilyController.updateVerilyUser);
 
 module.exports = router;

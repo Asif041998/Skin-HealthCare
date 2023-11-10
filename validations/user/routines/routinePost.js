@@ -8,12 +8,12 @@ const routinePostValidation = (data) => {
       .regex(/^[A-Za-z][A-Za-z0-9\s.,''""()\S]*$/)
       .trim()
       .messages({
-        "string.base": "Timeframe must be a string",
+        "string.base": "Please choose the Timeframe",
         "string.pattern.base":
-          "Timeframe can only contain a combination of alphabets and numbers",
+          "Please choose the Timeframe",
       }),
-    products: Joi.array().items(Joi.number()).min(1).required(),
-    treatments: Joi.array().items(Joi.number()).min(1).required(),
+    products: Joi.array().items(Joi.number()).required(),
+    treatments: Joi.array().items(Joi.number()),
   });
 
   return Schema.validate(data);

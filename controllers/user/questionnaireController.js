@@ -7,7 +7,6 @@ const { use } = require('../../routers/admin/collaborators');
 
 // CREATE QUESTIONNAIRE
 let survey_no;
-
 exports.questionnaires = async (req, res) => {
     try {
         const surveyData = req.body.survey;
@@ -46,64 +45,44 @@ exports.questionnaires = async (req, res) => {
     }
 };
 
-
+// GET ALL THE QUESTIONNAIRE
 exports.getAllQuestionnaires = async (req, res) => {
     try {
-        let finalArray = [];
-        let answerArray = [];
-        let surveyObject, c = 0;
         const questionData = await Question.findAll();
         const answerData = await Answer.findAll();
+        const questionMap = new Map();
 
-        for (let i = 0; i < questionData.length; i++) {
-
-            for (let j = c; j < answerData.length; j++) {
-                let question_id = answerData[j].question_id;
-
-                if (question_id === questionData[i].id) {
-                    let answerDetails = {
-                        answer_id: answerData[j].id,
-                        answer_text: answerData[j].answer,
-                        display_order: answerData[j].display_order
-                    }
-                    answerArray.push(answerDetails);
-
-                    if (j === answerData.length - 1) {
-                        surveyObject = {
-                            question_id: questionData[i].id,
-                            display_order: questionData[i].display_order,
-                            question_text: questionData[i].question,
-                            question_type: questionData[i].question_type,
-                            answer_details: answerArray
-                        }
-                    }
-                }
-                else {
-                    c = j;
-                    surveyObject = {
-                        question_id: questionData[i].id,
-                        display_order: questionData[i].display_order,
-                        question_text: questionData[i].question,
-                        question_type: questionData[i].question_type,
-                        answer_details: answerArray
-                    }
-                    answerArray = [];
-                    break;
-                }
+        questionData.forEach((question) => {
+            questionMap.set(question.id, {
+                question_id: question.id,
+                display_order: question.display_order,
+                question_text: question.question,
+                question_type: question.question_type,
+                answer_details: [],
+            });
+        });
+        answerData.forEach((answer) => {
+            const answerDetails = {
+                answer_id: answer.id,
+                answer_text: answer.answer,
+                display_order: answer.display_order,
+            };
+            const question = questionMap.get(answer.question_id);
+            if (question) {
+                question.answer_details.push(answerDetails);
             }
-
-            finalArray.push(surveyObject);
-        }
+        });
+        
+        const finalArray = Array.from(questionMap.values());
+        
         return res.status(200).json({
             message: "Questionnaire details fetched successfully",
-            data: finalArray
-        })
-    }
-    catch (err) {
+            data: finalArray,
+        });
+    } catch (err) {
         return res.status(400).json(err.message);
     }
 };
-
 
 //GET ALL THE SURVEYS WITH ID AND DATE
 exports.getAllSurveysAndDate = async (req, res) => {
@@ -138,7 +117,7 @@ exports.getAllSurveysAndDate = async (req, res) => {
 };
 
 
-// GET ALL THE SURVEYS BY ID
+// GET ALL THE SURVEYS BY SURVEY-ID
 exports.getSurveysById = async (req, res) => {
     try {
         const surveyId = req.params.survey_id;
@@ -203,7 +182,6 @@ exports.getSurveysById = async (req, res) => {
     }
 };
 
-
 // UPDATE THE QUESTIONNAIRE BY  SURVEY-ID 
 exports.updateQuestionnaires = async (req, res) => {
     try {
@@ -222,25 +200,61 @@ exports.updateQuestionnaires = async (req, res) => {
         for (let i = 0; i < surveyData.length; i++) {
             let survey = surveyData[i];
             if (survey.answer_text) {
-                await Questionnaire.update({ answer_text: survey.answer_text },
-                    {
+                if (survey.question_id === 21 && survey.answer_id === 150) {
+                    const [updatedAnwser] = await Questionnaire.update({ answer_id: survey.answer_id, },
+                        {
+                            where: {
+                                question_id: survey.question_id,
+                                survey_id: surveyId,
+                                user_id: userId
+                            }
+                        }
+                    );
+                    const [updated] = await Questionnaire.update({ answer_text: survey.answer_text },
+                        {
+                            where: {
+                                question_id: survey.question_id,
+                                answer_id: survey.answer_id,
+                                survey_id: surveyId,
+                                user_id: userId
+                            }
+                        }
+                    );
+                    // if (updated === 0)
+                    //     return res.status(400).json({ message: "No record updated" })
+                }
+                else {
+                    const [updated] = await Questionnaire.update({ answer_text: survey.answer_text },
+                        {
+                            where: {
+                                question_id: survey.question_id,
+                                answer_id: survey.answer_id,
+                                survey_id: surveyId,
+                                user_id: userId
+                            }
+                        }
+                    );
+                }
+            }
+            else {
+                if (survey.question_id === 21) {
+                    await Questionnaire.update({ answer_id: survey.answer_id, answer_text: null }, {
                         where: {
                             question_id: survey.question_id,
-                            answer_id: survey.answer_id,
                             survey_id: surveyId,
                             user_id: userId
                         }
-                    }
-                );
-            }
-            else {
-                await Questionnaire.update(survey, {
-                    where: {
-                        question_id: survey.question_id,
-                        survey_id: surveyId,
-                        user_id: userId
-                    }
-                });
+                    });
+                }
+                else {
+                    await Questionnaire.update(survey, {
+                        where: {
+                            question_id: survey.question_id,
+                            survey_id: surveyId,
+                            user_id: userId
+                        }
+                    });
+                }
             }
         }
 

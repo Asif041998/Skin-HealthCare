@@ -6,7 +6,7 @@ const collaboratorPostValidation = (data) => {
         title: Joi.string()
             .required()
             .trim()
-            .regex(/^(?=.*[A-Za-z])[A-Za-z0-9\s.,?''":;( )\[\]{}]+$/)
+            .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
             .messages({
                 "string.base": "Title must be a string",
                 "string.pattern.base":
@@ -24,7 +24,7 @@ const collaboratorPostValidation = (data) => {
                     "join_year can only contain numbers",
             }),
         about: Joi.string()
-            .regex(/^(?![^A-Za-z0-9]).*$/)
+            .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
             .trim()
             .required()
             .messages({
@@ -33,7 +33,7 @@ const collaboratorPostValidation = (data) => {
                     "About can only contain alphabets and numbers",
             }),
         participation_reason: Joi.string()
-            .regex(/^(?![^A-Za-z0-9]).*$/)
+            .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
             .trim()
             .required()
             .messages({
@@ -42,7 +42,7 @@ const collaboratorPostValidation = (data) => {
                     "participation_reason can only contain alphabets and numbers",
             }),
         learning_outcome: Joi.string()
-            .regex(/^(?![^A-Za-z0-9]).*$/)
+            .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
             .trim()
             .required()
             .messages({

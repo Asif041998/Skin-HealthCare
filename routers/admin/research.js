@@ -2,6 +2,7 @@ const router = require('express').Router();
 const research = require('../../controllers/admin/research');
 const adminVerify = require('../../middlewares/adminVerify');
 const userVerify = require('../../middlewares/userVerify');
+const UserAdminVerify = require('../../middlewares/userAdminVerify');
 
 
 /**
@@ -65,7 +66,7 @@ router.post('/research', adminVerify, research.research);
    *       400:
    *         description: Bad request
    */
-router.get('/research', research.getAllResearch);
+router.get('/research', UserAdminVerify, research.getAllResearch);
 
 
  /**
@@ -86,7 +87,7 @@ router.get('/research', research.getAllResearch);
    *       400:
    *         description: Bad request
    */
-router.get('/research/:id', research.getByIdResearch);
+router.get('/research/:id', UserAdminVerify, research.getByIdResearch);
 
   /**
    * @swagger
@@ -120,7 +121,7 @@ router.get('/research/:id', research.getByIdResearch);
    *         description: Bad request
    */
 router.put('/research/:id', adminVerify, research.updateByIdResearch);
-router.delete('/research/:id', adminVerify, research.deleteByIdResearch);
+// router.delete('/research/:id', adminVerify, research.deleteByIdResearch);
 
   /**
    * @swagger
