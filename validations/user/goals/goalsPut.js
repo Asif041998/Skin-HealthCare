@@ -12,8 +12,6 @@ const goalPutValidation = (data) => {
     user_id: Joi.number().integer(),
     goal_type: Joi.number().valid(1, 2),
     purpose: Joi.string()
-      .min(3)
-      .max(50)
       .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
       .trim()
       .messages({
@@ -22,10 +20,9 @@ const goalPutValidation = (data) => {
           "Skin Concern Name can only contain a combination of alphabets and numbers",
           "string.empty": "Please enter the Skin Concern Name",
       }),
-    start_date: Joi.date().iso().custom(customStartDateValidation).messages({
+    start_date: Joi.date().iso().messages({
       "date.base": "Start Date must be a date",
       "date.format": "Start Date must be in the format YYYY-MM-DD",
-      "date.min": "Start Date cannot be in the past",
       "date.empty" : "Please enter the Start Date",
     }),
     reached_date: Joi.date()

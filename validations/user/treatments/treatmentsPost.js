@@ -3,8 +3,7 @@ const Joi = require("joi");
 const treatmentPostValidation = (data) => {
     const Schema = Joi.object({
         user_id: Joi.number().integer().required(),
-        name: Joi.string().min(3)
-            .max(50)
+        name: Joi.string()
             .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
             .required()
             .trim()
@@ -15,7 +14,6 @@ const treatmentPostValidation = (data) => {
                     "Treatment Name can only contain a combination of alphabets and numbers",
             }),
         description: Joi.string()
-            .min(5)
             .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
             .trim()
             .messages({

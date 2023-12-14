@@ -56,7 +56,7 @@ exports.updateHippa = async (req, res) => {
 
   // Validate HIPPA notice
   if (!hippaNotice || typeof hippaNotice !== "string") {
-    return res.status(400).json({ error: "Missing or invalid HIPPA notice" });
+    return res.status(400).json({ message : error.message });
   }
 
   // Trim leading and trailing spaces from the HIPPA notice
@@ -79,7 +79,7 @@ exports.updateHippa = async (req, res) => {
     const fileContent = fs.readFileSync(filePath, "utf8");
     hippaData = JSON.parse(fileContent);
   } catch (error) {
-    return res.status(500).json({ error: "Error reading file" });
+    return res.status(500).json({  message : error.message });
   }
 
   const hippaToUpdate = hippaData.find(
@@ -87,7 +87,7 @@ exports.updateHippa = async (req, res) => {
   );
 
   if (!hippaToUpdate) {
-    return res.status(404).json({ error: "HIPPA notice not found" });
+    return res.status(404).json({ message : "HIPPA notice not found", data :[] });
   }
 
   hippaToUpdate.hippaNotice = trimmedHippaNotice;
@@ -98,7 +98,7 @@ exports.updateHippa = async (req, res) => {
     res.status(200).json({ message: "HIPPA notice data updated successfully" });
   } catch (error) {
     console.error("Error writing to file:", error);
-    return res.status(500).json({ error: "Error writing to file" });
+    return res.status(500).json({  message : error.message });
   }
 };
 
@@ -115,7 +115,7 @@ exports.getAllHippa = async (req, res) => {
     }
     res.status(200).json({data});
   } catch (error) {
-    return res.status(500).json({ error: "Error reading file" });
+    return res.status(500).json({  message : error.message });
   }
 
 };
@@ -130,7 +130,7 @@ exports.deleteHippa = async (req, res) => {
     const fileContent = fs.readFileSync(filePath, "utf8");
     hippaData = JSON.parse(fileContent);
   } catch (error) {
-    return res.status(500).json({ error: "Error reading file" });
+    return res.status(500).json({  message : error.message });
   }
 
   const hippaToDeleteIndex = hippaData.findIndex(
@@ -138,7 +138,7 @@ exports.deleteHippa = async (req, res) => {
   );
 
   if (hippaToDeleteIndex === -1) {
-    return res.status(404).json({ error: "HIPPA notice not found" });
+    return res.status(404).json({ message : "HIPPA notice not found", data:[] });
   }
 
   // Remove the HIPPA data from the array
@@ -150,6 +150,6 @@ exports.deleteHippa = async (req, res) => {
     res.status(200).json({ message: "HIPPA notice data deleted successfully" });
   } catch (error) {
     console.error("Error writing to file:", error);
-    return res.status(500).json({ error: "Error writing to file" });
+    return res.status(500).json({  message : error.message });
   }
 };

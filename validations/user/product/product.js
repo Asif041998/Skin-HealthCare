@@ -8,8 +8,7 @@ const productPostValidation = (data) => {
             .messages({
                 "string.base": "Image URL must be a string",
             }),
-        name: Joi.string().min(3)
-            .max(50)
+        name: Joi.string()
             // .regex(/^[A-Za-z][A-Za-z\s\-']+$/)
             .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
             .required()
@@ -20,8 +19,7 @@ const productPostValidation = (data) => {
                 "string.pattern.base":
                     "Product Name can only contain a combination of alphabets and numbers",
             }),
-        brand: Joi.string().min(3)
-            .max(50)
+        brand: Joi.string()
             .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
             .trim()
             .messages({
@@ -31,7 +29,6 @@ const productPostValidation = (data) => {
                     "Brand name can only contain a combination of alphabets and numbers",
             }),
         description: Joi.string()
-            .min(5)
             .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
             .trim()
             .messages({
@@ -40,8 +37,6 @@ const productPostValidation = (data) => {
                     "Description can only contain a combination of alphabets and numbers",
             }),
         purchase_location: Joi.string()
-            .min(3)
-            .max(100)
             .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
             .trim()
             .messages({

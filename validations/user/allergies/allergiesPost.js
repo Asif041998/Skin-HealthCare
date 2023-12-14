@@ -4,8 +4,6 @@ const allergiesPostValidation = (data) => {
   const Schema = Joi.object({
     user_id: Joi.number().integer().required(),
     allergen: Joi.string()
-      .min(3)
-      .max(50)
       .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
       .trim()
       .messages({
@@ -15,8 +13,6 @@ const allergiesPostValidation = (data) => {
         "string.empty": "Please enter the Ingredient name",
       }),
     allergic_reaction: Joi.string()
-      .min(3)
-      .max(50)
       .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
       .trim()
       .messages({
@@ -26,7 +22,6 @@ const allergiesPostValidation = (data) => {
         "string.empty": "Please enter What happens?",
       }),
     healing_methods: Joi.string()
-      .min(5)
       .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
       .trim()
       .messages({

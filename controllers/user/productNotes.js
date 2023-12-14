@@ -14,7 +14,6 @@ exports.productNotes = async (req, res) => {
 
     const { like_note, dislike_note, user_product_id } = req.body;
 
-    // Create a new product note without checking for existing data
     const createdNotes = await ProductNotes.create({
       like_note,
       dislike_note,
@@ -77,12 +76,11 @@ exports.updateByIdProductNotes = async (req, res) => {
 // GET ALL THE SPEAKER SERIES Notes WITH SPEAKER DETAILS
 exports.getAllProductNotes = async (req, res) => {
   try {
-    // Use Sequelize to perform a JOIN operation to get speaker details
     const productNotesList = await ProductNotes.findAll({
       include: [
         {
           model: Products,
-          as: "products", // This should match the alias you set in the Notes model
+          as: "products",
           attributes: ["name", "description", "purchase_location", "open_date", "price", "image", "product_type_id", "expiration_date"],
         },
       ],
@@ -102,14 +100,13 @@ exports.getAllProductNotes = async (req, res) => {
 // GET A SPECIFIC Product Notes BY ID
 exports.getByIdProductNotes = async (req, res) => {
   try {
-    const Id = req.params.id; // Use 'Id' to match the parameter in the route definition
+    const Id = req.params.id;
 
     if (!/^\d+$/.test(Id)) {
       return res.status(400).json({
         message: "Invalid ID format",
       });
     }
-    // Use Sequelize to find the event by its ID and include speaker details
     const note = await ProductNotes.findByPk(Id, {
       include: [
         {
@@ -144,9 +141,9 @@ exports.getByUserProductIdProductNotes = async (req, res) => {
       });
     }
 
-    // Use Sequelize to find the product notes by user_product_id and include product details
     const notes = await ProductNotes.findAll({
-      where: { user_product_id }, // Correct usage of the where clause
+      where: { user_product_id },
+      order: [['createdAt', 'DESC']],
       include: [
         {
           model: Products,
@@ -156,9 +153,8 @@ exports.getByUserProductIdProductNotes = async (req, res) => {
       ],
     });
 
-    if (!notes || notes.length === 0) { // Check if notes array is empty
+    if (!notes || notes.length === 0)
       return res.status(200).json({ message: 'Product Notes not found', data: [] });
-    }
 
     return res.status(200).json({
       message: 'Product Notes fetched successfully',

@@ -4,8 +4,6 @@ const prescriptionsPostValidation = (data) => {
   const Schema = Joi.object({
     user_id: Joi.number().integer().required(),
     provider: Joi.string()
-      .min(3)
-      .max(50)
       .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
       .trim()
       .messages({
@@ -13,8 +11,6 @@ const prescriptionsPostValidation = (data) => {
         "string.pattern.base": "Provider name can only contain alphabets",
       }),
     reason: Joi.string()
-      .min(3)
-      .max(50)
       .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
       .trim()
       .messages({
@@ -24,7 +20,6 @@ const prescriptionsPostValidation = (data) => {
           "string.empty": "Please enter the Reason for Visit",
       }),
     diagnosis: Joi.string()
-      .min(5)
       .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
       .trim()
       .messages({

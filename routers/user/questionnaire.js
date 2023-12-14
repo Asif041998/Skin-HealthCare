@@ -300,5 +300,7 @@ router.put('/surveys/:survey_id', userVerify, questionnaireController.updateQues
 // router.delete('/questionnaires/:id', questionnaireController.questionnaires);
 router.get('/surveys', userVerify, questionnaireController.getAllSurveysAndDate);
 router.get('/surveys/:survey_id', userVerify, questionnaireController.getSurveysById);
+router.get('/survey', userVerify, questionnaireController.getFitzpatrickByUserId);
+
 
 module.exports = router;

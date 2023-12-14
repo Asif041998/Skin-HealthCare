@@ -11,8 +11,7 @@ const notificationsPostValidation = (data) => {
                 "string.pattern.base":
                     "Type can only contain a combination of alphabets, numbers and special characters",
             }),
-            title: Joi.string().min(3)
-            .max(50)
+            title: Joi.string()
             .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
             .trim()
             .messages({
@@ -22,7 +21,6 @@ const notificationsPostValidation = (data) => {
                     "Title can only contain a combination of alphabets, numbers and special characters",
             }),
             description: Joi.string()
-            .min(5)
             .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
             .trim()
             .messages({

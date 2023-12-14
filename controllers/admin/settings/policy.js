@@ -79,7 +79,7 @@ exports.updatePolicy = async (req, res) => {
     const fileContent = fs.readFileSync(filePath, "utf8");
     policyData = JSON.parse(fileContent);
   } catch (error) {
-    return res.status(500).json({ error: "Error reading file" });
+    return res.status(500).json({  message : error.message });
   }
 
   const policyToUpdate = policyData.find(
@@ -87,7 +87,7 @@ exports.updatePolicy = async (req, res) => {
   );
 
   if (!policyToUpdate) {
-    return res.status(404).json({ error: "Privacy policy not found" });
+    return res.status(404).json({ error: "Privacy policy not found", data:[] });
   }
 
   policyToUpdate.privacyPolicy = trimmedPrivacyPolicy;
@@ -98,7 +98,7 @@ exports.updatePolicy = async (req, res) => {
     res.status(200).json({ message: "Privacy policy data updated successfully" });
   } catch (error) {
     console.error("Error writing to file:", error);
-    return res.status(500).json({ error: "Error writing to file" });
+    return res.status(500).json({ message : error.message });
   }
 };
 
@@ -115,7 +115,7 @@ exports.getAllPolicy = async (req, res) => {
     }
     res.status(200).json({data});
   } catch (error) {
-    return res.status(500).json({ error: "Error reading file" });
+    return res.status(500).json({ message : error.message });
   }
 
 };
@@ -130,7 +130,7 @@ exports.deletePolicy = async (req, res) => {
     const fileContent = fs.readFileSync(filePath, "utf8");
     policyData = JSON.parse(fileContent);
   } catch (error) {
-    return res.status(500).json({ error: "Error reading file" });
+    return res.status(500).json({ message : error.message });
   }
 
   const policyToDeleteIndex = policyData.findIndex(
@@ -138,7 +138,7 @@ exports.deletePolicy = async (req, res) => {
   );
 
   if (policyToDeleteIndex === -1) {
-    return res.status(404).json({ error: "Privacy policy not found" });
+    return res.status(404).json({ error: "Privacy policy not found", data:[] });
   }
 
   // Remove the policy data from the array
@@ -150,6 +150,6 @@ exports.deletePolicy = async (req, res) => {
     res.status(200).json({ message: "Privacy policy data deleted successfully" });
   } catch (error) {
     console.error("Error writing to file:", error);
-    return res.status(500).json({ error: "Error writing to file" });
+    return res.status(500).json({ message : error.message });
   }
 };

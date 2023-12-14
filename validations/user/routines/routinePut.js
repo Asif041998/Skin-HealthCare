@@ -4,7 +4,6 @@ const routinePutValidation = (data) => {
   const Schema = Joi.object({
     user_id: Joi.number().integer(),
     timeframe: Joi.string()
-      .min(5)
       .regex(/^[A-Za-z][A-Za-z0-9\s.,''""()\S]*$/)
       .trim()
       .messages({

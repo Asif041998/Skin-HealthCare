@@ -15,7 +15,7 @@ const emailValidator = require('email-validator');
 exports.registerUser = async (req, res) => {
   try {
     if (!emailValidator.validate(req.body.email)) {
-      return res.status(400).json({ message: "Please provide a valid email address" });
+      return res.status(400).json({ message: 'Please provide a valid email address' });
     }
 
     const { error } = registrationValidations(req.body);
@@ -23,15 +23,16 @@ exports.registerUser = async (req, res) => {
       return res.status(400).send({ error: error.details[0].message });
     }
 
-    let { firstname, lastname, email, password, state, birth_year, race_id } = req.body;
+    let { firstname, lastname, email, password, state, birth_year, race_id, fcm_token } = req.body;
 
     password = await bcrypt.hash(password, 10);
 
     try {
       const existingUser = await User.findOne({ where: { email, deletedAt: null } });
       if (existingUser) {
-        return res.status(409).json({ message: "Email already exists" });
+        return res.status(409).json({ message: 'Email already exists' });
       }
+
       const newUser = await User.create({
         firstname,
         lastname,
@@ -40,7 +41,17 @@ exports.registerUser = async (req, res) => {
         state,
         birth_year,
         race_id,
+        fcm_token,
       });
+
+      try {
+        await UserFCMToken.create({
+          user_id: newUser.id, 
+          fcm_token: fcm_token,
+        });
+      } catch (error) {
+        return res.status(500).json({ message: 'Error saving FCM token', error: error.message });
+      }
 
       const transporter = nodemailer.createTransport({
         host: process.env.EMAIL_HOST,
@@ -53,7 +64,7 @@ exports.registerUser = async (req, res) => {
       });
 
       const mailOptions = {
-        from: 'kepthealthcares@gmail.com',
+        from: process.env.EMAIL_USER,
         to: email,
         subject: "Welcome to K'ept Health",
         text: 'Thank you for registering with our service. We are excited to have you as a user!',
@@ -61,19 +72,19 @@ exports.registerUser = async (req, res) => {
 
       transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
-          return res.status(400).json({ message: "Failed to send a welcome email. Please provide a valid email address." });
-        }
-        else {
+          return res.status(400).json({ message: error.message });
+        } else {
           return res.status(201).json({
-            message: "Account created successfully",
+            message: 'Account created successfully',
             data: {
-              user_id: newUser.dataValues.id,
+              user_id: newUser.id,
               email: email,
               firstname: firstname,
               lastname: lastname,
               state: state,
               birth_year: birth_year,
               race_id: race_id,
+              fcm_token: fcm_token,
             },
           });
         }
@@ -85,79 +96,7 @@ exports.registerUser = async (req, res) => {
     return res.status(400).send(err.message);
   }
 };
-// exports.registerUser = async (req, res) => {
-//   try {
-//     if (!emailValidator.validate(req.body.email)) {
-//       return res.status(400).json({ message: "Please provide a valid email address" });
-//     }
 
-//     const { error } = registrationValidations(req.body);
-//     if (error) {
-//       return res.status(400).send({ error: error.details[0].message });
-//     }
-
-//     let { firstname, lastname, email, password, state, birth_year, race_id } = req.body;
-
-//     password = await bcrypt.hash(password, 10);
-
-//     try {
-//       const existingUser = await User.findOne({ where: { email, deletedAt: null } });
-//       if (existingUser) {
-//         return res.status(409).json({ message: "Email already exists" });
-//       }
-
-//       const newUser = await User.create({
-//         firstname,
-//         lastname,
-//         email,
-//         password,
-//         state,
-//         birth_year,
-//         race_id,
-//       });
-
-//       const transporter = nodemailer.createTransport({
-//         host: process.env.EMAIL_HOST,
-//         port: process.env.EMAIL_PORT,
-//         secure: true,
-//         auth: {
-//           user: process.env.EMAIL_USER,
-//           pass: process.env.EMAIL_PASS,
-//         },
-//       });
-
-//       const mailOptions = {
-//         from: 'kepthealthcares@gmail.com',
-//         to: email,
-//         subject: "Welcome to K'ept Health",
-//         text: 'Thank you for registering with our service. We are excited to have you as a user!',
-//       };
-
-//       transporter.sendMail(mailOptions, (error, info) => {
-//         if (error) {
-//           return res.status(400).json({ message: "Failed to send a welcome email. Please provide a valid email address." });
-//         } else {
-//           return res.status(201).json({
-//             message: "Account created successfully",
-//             data: {
-//               user_id: newUser.dataValues.id,
-//               email: email,
-//               firstname: firstname,
-//               lastname: lastname,
-//               state: state,
-//               birth_year: birth_year,
-//               race_id: race_id,
-//             },
-//           });
-//         }
-//       });
-//     } catch (error) {
-//       return res.status(500).json(error);
-//     }
-//   } catch (err) {
-//     return res.status(400).send(err.message);
-//   }
-// };
 
 
 //FOR UPDATING THE USER
@@ -306,13 +245,17 @@ exports.contactUs = async (req, res) => {
 
 
 //LOGIN
+const UserFCMToken = require('../../models/user/userFCM'); 
+
 exports.loginUser = async (req, res) => {
   try {
     const { error } = loginValidations(req.body);
     if (error) {
       return res.status(400).json({ message: error.details[0].message });
     }
-    const { email, password } = req.body;
+
+    const { email, password, fcm_token } = req.body;
+
     const user = await User.findOne({ where: { email } });
     if (!user) {
       return res.status(401).json({ error: "Incorrect email or password" });
@@ -322,6 +265,14 @@ exports.loginUser = async (req, res) => {
     if (!validPass) {
       return res.status(401).json({ error: "Incorrect email or password" });
     }
+
+    const existingFCMToken = await UserFCMToken.findOne({ where: { user_id: user.id, fcm_token } });
+    if (!existingFCMToken) {
+      await UserFCMToken.create({ user_id: user.id, fcm_token });
+    }
+
+    user.fcm_token = fcm_token || null;
+    await user.save();
 
     const token = jwt.sign(
       { id: user.id, role: "user", createdAt: user.createdAt },
@@ -345,6 +296,7 @@ exports.loginUser = async (req, res) => {
       birth_year: user.birth_year,
       race_id: user.race_id,
       access_token: token,
+      fcm_token: user.fcm_token,
     };
 
     res.status(200).json({
@@ -353,11 +305,9 @@ exports.loginUser = async (req, res) => {
       expiresIn: "30d",
     });
   } catch (err) {
-    res.status(500).json(err.message);
+    res.status(500).json({ message: err.message });
   }
 };
-
-
 
 
 

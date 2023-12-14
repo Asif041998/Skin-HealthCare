@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../../database/connection');
 const ArticleRoutine = require('../../models/admin/articleRoutine');
-const ArticleImages = require('../../models/admin/articleImages');
+const ArticleImage = require('../../models/admin/articleImages');
 const ArticleVideo = require('../../models/admin/articleVideos');
 
 const Article = sequelize.define('articles', {
@@ -40,11 +40,12 @@ const Article = sequelize.define('articles', {
   },
   content_type: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
 }, { freezeTableName: true });
 
 Article.hasMany(ArticleRoutine, { foreignKey: 'article_id' });
 Article.hasOne(ArticleVideo, { foreignKey: 'article_id' });
+Article.hasMany(ArticleImage, { foreignKey: 'article_id'});
 
 module.exports = Article;

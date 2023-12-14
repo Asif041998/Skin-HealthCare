@@ -3,9 +3,13 @@ const { Op } = require("sequelize");
 const moment = require("moment");
 const { User } = require("../../models/user/user");
 const Products = require("../../models/user/products");
+const Routines = require("../../models/user/routines");
 const Notifications = require("../../models/user/notifications");
 const Questionnaire = require("../../models/user/questionnaire");
 const notificationsPostValidation = require("../../validations/user/notifications/post");
+const userFCM = require("../../models/user/userFCM");
+const admin = require("firebase-admin");
+const serviceAccount = require("../../config/push-notification.json");
 
 exports.notifications = async (req, res) => {
   try {
@@ -93,7 +97,7 @@ exports.notification = async (req, res) => {
   const sendCheckInNotifications = async () => {
     const eightWeekNotifications = {
       userId,
-      message: `Sending eight week notification to user with ID ${userId}`,
+      message: `Sending eight week routine check-In notification to user with ID ${userId}`,
     };
 
     await Notifications.create({
@@ -104,10 +108,48 @@ exports.notification = async (req, res) => {
       user_id: userId,
     });
 
+    checkInNotificationsSent = false;
+
     // console.log(
     //   "Routine Check In notification sent and saved to the database."
     // );
   };
+  const scheduleEightWeekCheckIn = async (userId) => {
+    const latestRoutine = await Routines.findOne({
+      where: {
+        user_id: userId,
+        createdAt: {
+          [Op.not]: null,
+        },
+      },
+      order: [["createdAt", "DESC"]],
+    });
+
+    if (latestRoutine) {
+      const targetDateForEightWeeks = moment(latestRoutine.createdAt).add(
+        8,
+        "weeks"
+      );
+
+      const eightWeekCronSchedule = `${targetDateForEightWeeks.minutes()} ${targetDateForEightWeeks.hours()} ${targetDateForEightWeeks.date()} ${
+        targetDateForEightWeeks.month() + 1
+      } *`;
+
+      if (moment(latestRoutine.createdAt).year() == moment(new Date()).year()) {
+        const eightWeekTask = cron.schedule(eightWeekCronSchedule, async () => {
+          if (!checkInNotificationsSent) {
+            console.log("Running Routine Check-In notification scheduler...");
+            await sendCheckInNotifications(userId);
+            checkInNotificationsSent = true;
+          }
+        });
+
+        eightWeekTask.start();
+      }
+    }
+  };
+
+  scheduleEightWeekCheckIn(userId);
 
   const sendSurveyNotifications = async () => {
     const surveyNotifications = {
@@ -135,7 +177,7 @@ exports.notification = async (req, res) => {
 
   const targetDateForFeedback = moment(userCreatedAt).add(4, "days");
   const targetDateForOneYear = moment(userCreatedAt).add(1, "year");
-  const targetDateForEightWeeks = moment(userCreatedAt).add(8, "weeks");
+  // const targetDateForEightWeeks = moment(userCreatedAt).add(8, "weeks");
   const targetDateForTwoWeeks = moment(userCreatedAt).add(2, "weeks");
 
   const feedbackCronSchedule = `${targetDateForFeedback.minutes()} ${targetDateForFeedback.hours()} ${targetDateForFeedback.date()} ${
@@ -144,9 +186,9 @@ exports.notification = async (req, res) => {
   const oneYearCronSchedule = `${targetDateForOneYear.minutes()} ${targetDateForOneYear.hours()} ${targetDateForOneYear.date()} ${
     targetDateForOneYear.month() + 1
   } *`;
-  const eightWeekCronSchedule = `${targetDateForEightWeeks.minutes()} ${targetDateForEightWeeks.hours()} ${targetDateForEightWeeks.date()} ${
-    targetDateForEightWeeks.month() + 1
-  } *`;
+  // const eightWeekCronSchedule = `${targetDateForEightWeeks.minutes()} ${targetDateForEightWeeks.hours()} ${targetDateForEightWeeks.date()} ${
+  //   targetDateForEightWeeks.month() + 1
+  // } *`;
   const twoWeekCronSchedule = `${targetDateForTwoWeeks.minutes()} ${targetDateForTwoWeeks.hours()} ${targetDateForTwoWeeks.date()} ${
     targetDateForTwoWeeks.month() + 1
   } *`;
@@ -173,17 +215,17 @@ exports.notification = async (req, res) => {
 
   oneYearTask.start();
 
-  if (moment(userCreatedAt).year() == moment(new Date()).year()) {
-    const eightWeekTask = cron.schedule(eightWeekCronSchedule, async () => {
-      if (!checkInNotificationsSent) {
-        // console.log("Running Routine Check In notification scheduler...");
-        await sendCheckInNotifications();
-        checkInNotificationsSent = true;
-      }
-    });
+  // if (moment(userCreatedAt).year() == moment(new Date()).year()) {
+  //   const eightWeekTask = cron.schedule(eightWeekCronSchedule, async () => {
+  //     if (!checkInNotificationsSent) {
+  //       // console.log("Running Routine Check In notification scheduler...");
+  //       await sendCheckInNotifications();
+  //       checkInNotificationsSent = true;
+  //     }
+  //   });
 
-    eightWeekTask.start();
-  }
+  //   eightWeekTask.start();
+  // }
 
   if (moment(userCreatedAt).year() == moment(new Date()).year()) {
     const twoWeekTask = cron.schedule(twoWeekCronSchedule, async () => {
@@ -198,10 +240,10 @@ exports.notification = async (req, res) => {
   }
 
   //Product Expiration in 'X' days Notification
-  const sendExpirationNotifications = async (userId) => {
+  const sendExpirationNotifications = async (userId, name) => {
     const expirationNotifications = {
       userId,
-      message: `Sending Product Expiration notification to user with ID ${userId}`,
+      message: `Your ${name} will expire in 30 days.`,
     };
 
     await Notifications.create({
@@ -224,7 +266,7 @@ exports.notification = async (req, res) => {
         [Op.not]: null,
       },
     },
-    attributes: ["expiration_date", "user_id"],
+    attributes: ["expiration_date", "user_id", "name"],
   });
 
   // console.log("Products with Expiration Dates:", products);
@@ -232,7 +274,7 @@ exports.notification = async (req, res) => {
   for (const product of products) {
     const { expiration_date, user_id } = product;
     const targetDateForXDays = moment(expiration_date).subtract(30, "days");
-    const xDaysCronSchedule = `00 09 ${targetDateForXDays.date()} ${
+    const xDaysCronSchedule = `00 06 ${targetDateForXDays.date()} ${
       targetDateForXDays.month() + 1
     } *`;
 
@@ -242,7 +284,7 @@ exports.notification = async (req, res) => {
         //   "Running X Days for product to expire notification scheduler for User ID",
         //   user_id
         // );
-        await sendExpirationNotifications(user_id);
+        await sendExpirationNotifications(user_id, name);
         expirationNotificationsSent[user_id] = true;
       }
     });
@@ -251,21 +293,87 @@ exports.notification = async (req, res) => {
   }
 
   //Product Expired Notification
-  const sendExpiredNotifications = async (userId) => {
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+  });
+
+  const sendExpiredNotifications = async (userId, name) => {
     const expiredNotifications = {
       userId,
-      message: `Sending Product Expired notification to user with ID ${userId}`,
+      message: `Your ${name} is expired.`,
     };
 
-    await Notifications.create({
-      type: "product",
-      title: "Product Expired Notification",
-      description: expiredNotifications.message,
-      is_read: 0,
-      user_id: userId,
-    });
+    try {
+      await Notifications.create({
+        type: "product",
+        title: "Product Expired Notification",
+        description: expiredNotifications.message,
+        is_read: 0,
+        user_id: userId,
+      });
 
-    console.log("Product Expired notification sent and saved to the database.");
+      console.log(
+        "Product Expired notification sent and saved to the database."
+      );
+
+      await sendPushNotification(userId, expiredNotifications.message);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  };
+
+  const sendPushNotification = async (userId, notificationMessage) => {
+    try {
+      const userTokens = await userFCM.findAll({
+        where: {
+          user_id: userId,
+          fcm_token: {
+            [Op.not]: null,
+          },
+        },
+      });
+
+      if (userTokens.length > 0) {
+        const notifications = await Notifications.findAll({
+          where: {
+            user_id: userId,
+            type: "product",
+            title: "Product Expired Notification",
+          },
+        });
+        // console.log(notifications);
+        if (notifications) {
+          // const note = notifications.map(async (result) => {
+          //   console.log(result);
+          const sendPromises = userTokens.map(async (tokenObj) => {
+            try {
+              const message = {
+                notification: {
+                  title: "k'ept health",
+                  body: notificationMessage,
+                },
+                token: tokenObj.fcm_token,
+              };
+
+              await admin.messaging().send(message);
+            } catch (error) {
+              res.status(500).json({ message: error.message });
+            }
+          });
+
+          await Promise.all(sendPromises);
+
+          console.log("Push notifications sent successfully");
+        } else {
+          console.log("No notifications to send");
+        }
+      } else {
+        console.log("No FCM tokens found for the user");
+      }
+    } catch (error) {
+      console.error("Error sending push notifications:", error.message);
+      res.status(500).json({ message: error.message });
+    }
   };
 
   const products1 = await Products.findAll({
@@ -275,25 +383,19 @@ exports.notification = async (req, res) => {
         [Op.not]: null,
       },
     },
-    attributes: ["expiration_date", "user_id"],
+    attributes: ["expiration_date", "user_id", "name"],
   });
 
-  // console.log("Products with Expiration Dates:", products1);
-
   for (const product of products1) {
-    const { expiration_date, user_id } = product;
-    const targetDateForExpired = moment(expiration_date).subtract(30, "days");
-    const expiredCronSchedule = `00 09 ${targetDateForExpired.date()} ${
+    const { expiration_date, user_id, name } = product;
+    const targetDateForExpired = moment(expiration_date);
+    const expiredCronSchedule = `00 06 ${targetDateForExpired.date()} ${
       targetDateForExpired.month() + 1
     } *`;
 
     const expiredTask = cron.schedule(expiredCronSchedule, async () => {
       if (!expiredNotificationsSent[user_id]) {
-        // console.log(
-        //   "Running product expired notification scheduler for User ID",
-        //   user_id
-        // );
-        await sendExpiredNotifications(user_id);
+        await sendExpiredNotifications(user_id, name);
         expiredNotificationsSent[user_id] = true;
       }
     });
@@ -319,7 +421,7 @@ exports.updateNotification = async (req, res) => {
         where: {
           type: notificationType,
           user_id: req.user.id,
-          id : Id,
+          id: Id,
           is_read: 0,
         },
       }
@@ -330,7 +432,7 @@ exports.updateNotification = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({message: error.message});
+    res.status(500).json({ message: error.message });
   }
 };
 

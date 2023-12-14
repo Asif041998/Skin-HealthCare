@@ -66,7 +66,7 @@ exports.updateTerms = async (req, res) => {
     const fileContent = fs.readFileSync(filePath, "utf8");
     termsData = JSON.parse(fileContent);
   } catch (error) {
-    return res.status(500).json({ error: "Error reading file" });
+    return res.status(500).json({ message : error.message });
   }
 
   const termsToUpdate = termsData.find(
@@ -74,7 +74,7 @@ exports.updateTerms = async (req, res) => {
   );
 
   if (!termsToUpdate) {
-    return res.status(404).json({ error: "Terms and conditions not found" });
+    return res.status(404).json({ message : "Terms and conditions not found", data:[] });
   }
 
   termsToUpdate.termsAndConditions = trimmedTermsAndConditions;
@@ -84,7 +84,7 @@ exports.updateTerms = async (req, res) => {
     res.status(200).json({ message: "Terms and conditions data updated successfully" });
   } catch (error) {
     console.error("Error writing to file:", error);
-    return res.status(500).json({ error: "Error writing to file" });
+    return res.status(500).json({ message : error.message });
   }
 };
 
@@ -101,7 +101,7 @@ exports.getAllTerms = async (req, res) => {
     }
     res.status(200).json({data});
   } catch (error) {
-    return res.status(500).json({ error: "Error reading file" });
+    return res.status(500).json({ message : error.message });
   }
 
 };
@@ -117,7 +117,7 @@ exports.deleteTerms = async (req, res) => {
     const fileContent = fs.readFileSync(filePath, "utf8");
     termsData = JSON.parse(fileContent);
   } catch (error) {
-    return res.status(500).json({ error: "Error reading file" });
+    return res.status(500).json({  message : error.message });
   }
 
   const termsToDeleteIndex = termsData.findIndex(
@@ -125,7 +125,7 @@ exports.deleteTerms = async (req, res) => {
   );
 
   if (termsToDeleteIndex === -1) {
-    return res.status(404).json({ error: "Terms and conditions not found" });
+    return res.status(404).json({ message : "Terms and conditions not found", data:[] });
   }
 
   // Remove the terms and conditions data from the array
@@ -137,6 +137,6 @@ exports.deleteTerms = async (req, res) => {
     res.status(200).json({ message: "Terms and conditions data deleted successfully" });
   } catch (error) {
     console.error("Error writing to file:", error);
-    return res.status(500).json({ error: "Error writing to file" });
+    return res.status(500).json({ message : error.message });
   }
 };

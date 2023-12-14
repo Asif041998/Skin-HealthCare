@@ -15,11 +15,11 @@ const SkinAnalysis = sequelize.define("skin_health_analysis", {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  dark_spots: {
+  dark_circle: {
     type: DataTypes.INTEGER,
     allowNull: true,
   },
-  face_wrinkles: {
+  skin_dullness: {
     type: DataTypes.INTEGER,
     allowNull: true,
   },
@@ -36,6 +36,10 @@ const SkinAnalysis = sequelize.define("skin_health_analysis", {
     allowNull: true,
   },
   texture:{
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
+  hyperpigmentation:{
     type: DataTypes.INTEGER,
     allowNull: true,
   }

@@ -22,12 +22,12 @@ exports.routines = async (req, res) => {
     });
 
     const routineId = routine.id;
-    
+
     let routinesProduct;
     let routinesTreatment;
 
     if (timeframe === 'Morning' || timeframe === 'Evening') {
-      routinesProduct = await Promise.all(
+      routinesProduct = products ? await Promise.all(
         products.map(async (result) => {
           const createProduct = await userSkinCareRoutineProducts.create({
             user_skin_care_routine_id: routineId,
@@ -35,26 +35,27 @@ exports.routines = async (req, res) => {
           });
           return createProduct;
         })
-      );
+      ) : [];
     } else {
-      // For other timeframes, add both products and treatments
-      routinesProduct = await Promise.all(
+      routinesProduct = products ? await Promise.all(
         products.map(async (result) => {
           const createProduct = await userSkinCareRoutineProducts.create({
             user_skin_care_routine_id: routineId,
             user_product_id: result,
           });
           return createProduct;
-        }));
+        })
+      ) : [];
 
-      routinesTreatment = await Promise.all(
+      routinesTreatment = treatments ? await Promise.all(
         treatments.map(async (result) => {
           const createTreatment = await userSkinCareRoutineTreatments.create({
             user_skin_care_routine_id: routineId,
             user_facial_treatment_id: result,
           });
           return createTreatment;
-        }));
+        })
+      ) : [];
     }
 
     const responseObject = {
@@ -69,7 +70,7 @@ exports.routines = async (req, res) => {
       data: responseObject,
     });
   } catch (err) {
-    return res.status(400).send(err.message);
+    return res.status(400).json({message : err.message});
   }
 };
 

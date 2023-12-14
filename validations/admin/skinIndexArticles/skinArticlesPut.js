@@ -6,7 +6,7 @@ const skinIndexArticlesPutValidation = (data) => {
             .messages({
                 "string.base": "Image must be a string",
             }),
-        title: Joi.string().min(3).max(50)
+        title: Joi.string()
             .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
             .trim()
             .messages({
@@ -23,7 +23,6 @@ const skinIndexArticlesPutValidation = (data) => {
                     "article_content can only contain a combination of alphabets and numbers",
             }),
         description: Joi.string()
-            .min(5)
             .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
             .trim()
             .messages({
@@ -32,7 +31,6 @@ const skinIndexArticlesPutValidation = (data) => {
                     "Description can only contain a combination of alphabets and numbers",
             }),
         article_type: Joi.string()
-            .min(5)
             .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
             .trim()
             .messages({

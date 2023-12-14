@@ -35,6 +35,7 @@ const registrationValidations = (data) => {
     birth_year: Joi.number(),
     race_id: Joi.number().max(12),
     reset_token: Joi.string(),
+    fcm_token: Joi.string(),
   });
   return Schema.validate(data);
 };
@@ -46,7 +47,10 @@ const loginValidations = (data) => {
     }),
     password: Joi.string().required().trim().messages({
       "string.empty" : "Please enter the Password",
-    })
+    }),
+    fcm_token: Joi.string().trim().messages({
+      "string.empty" : "Please enter the FCM token",
+    }),
   });
   return Schema.validate(data);
 };

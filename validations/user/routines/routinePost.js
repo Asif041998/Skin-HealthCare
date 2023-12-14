@@ -4,7 +4,6 @@ const routinePostValidation = (data) => {
   const Schema = Joi.object({
     user_id: Joi.number().integer().required(),
     timeframe: Joi.string()
-      .min(5)
       .regex(/^[A-Za-z][A-Za-z0-9\s.,''""()\S]*$/)
       .trim()
       .messages({
@@ -12,7 +11,7 @@ const routinePostValidation = (data) => {
         "string.pattern.base":
           "Please choose the Timeframe",
       }),
-    products: Joi.array().items(Joi.number()).required(),
+    products: Joi.array().items(Joi.number()),
     treatments: Joi.array().items(Joi.number()),
   });
 

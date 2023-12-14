@@ -7,7 +7,6 @@ const {
 } = require("../../validations/admin/adminValidation");
 
 const Admin = require("../../models/admin/admin");
-// const BlacklistedToken = require("../../models/blacklist");
 
 
 // ADMIN REGISTER
@@ -128,7 +127,6 @@ exports.changePassword = async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 };
-``
 
 
 //ADMIN LOGOUT

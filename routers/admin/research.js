@@ -121,7 +121,6 @@ router.get('/research/:id', UserAdminVerify, research.getByIdResearch);
    *         description: Bad request
    */
 router.put('/research/:id', adminVerify, research.updateByIdResearch);
-// router.delete('/research/:id', adminVerify, research.deleteByIdResearch);
 
   /**
    * @swagger

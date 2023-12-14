@@ -6,8 +6,6 @@ const goalPostValidation = (data) => {
     user_id: Joi.number().integer().required(),
     goal_type: Joi.number().required().valid(1, 2),
     purpose: Joi.string()
-      .min(3)
-      .max(50)
       .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
       .trim()
       .messages({

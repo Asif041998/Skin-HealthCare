@@ -9,7 +9,6 @@ const skincareRoutine101PostValidations = (data) => {
     //         "string.pattern.base": "Title can only contain a combination of alphabets, numbers, and special characters",
     //     }),
     article_content: Joi.string()
-      .min(3)
       .required()
       .trim()
       .pattern(new RegExp(/^[a-zA-Z0-9!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]+$/))
@@ -19,7 +18,6 @@ const skincareRoutine101PostValidations = (data) => {
           "Article content can only contain a combination of alphabets, numbers, and special characters",
       }),
     description: Joi.string()
-      .min(5)
       .trim()
       .pattern(new RegExp(/^[a-zA-Z0-9!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]+$/))
       .messages({
@@ -28,7 +26,6 @@ const skincareRoutine101PostValidations = (data) => {
           "Description can only contain a combination of alphabets, numbers, and special characters",
       }),
     article_type: Joi.string()
-      .min(5)
       .required()
       .trim()
       .pattern(new RegExp(/^[a-zA-Z0-9!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]+$/))

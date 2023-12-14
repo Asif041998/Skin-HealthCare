@@ -27,7 +27,6 @@ const skincareRoutine101PutValidations = (data) => {
           "Article Content can contain a combination of alphabets, numbers, and special characters, but must include at least one alphabet character",
       }),
     article_type: Joi.string()
-      .min(5)
       .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
       .trim()
       .messages({

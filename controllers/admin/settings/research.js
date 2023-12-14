@@ -66,7 +66,7 @@ exports.updateResearch = async (req, res) => {
     const fileContent = fs.readFileSync(filePath, "utf8");
     researchData = JSON.parse(fileContent);
   } catch (error) {
-    return res.status(500).json({ error: "Error reading file" });
+    return res.status(500).json({  message : error.message});
   }
 
   const researchToUpdate = researchData.find(
@@ -74,7 +74,7 @@ exports.updateResearch = async (req, res) => {
   );
 
   if (!researchToUpdate) {
-    return res.status(404).json({ error: "Research notice not found" });
+    return res.status(404).json({ message : "Research notice not found", data:[] });
   }
 
   researchToUpdate.researchNotice = trimmedResearchNotice;
@@ -84,7 +84,7 @@ exports.updateResearch = async (req, res) => {
     res.status(200).json({ message: "Research notice data updated successfully" });
   } catch (error) {
     console.error("Error writing to file:", error);
-    return res.status(500).json({ error: "Error writing to file" });
+    return res.status(500).json({ message : error.message });
   }
 };
 
@@ -101,7 +101,7 @@ exports.getAllResearch = async (req, res) => {
     }
     res.status(200).json({data});
   } catch (error) {
-    return res.status(500).json({ error: "Error reading file" });
+    return res.status(500).json({  message : error.message });
   }
 
 };
@@ -116,7 +116,7 @@ exports.deleteResearch = async (req, res) => {
     const fileContent = fs.readFileSync(filePath, "utf8");
     researchData = JSON.parse(fileContent);
   } catch (error) {
-    return res.status(500).json({ error: "Error reading file" });
+    return res.status(500).json({ message : error.message });
   }
 
   const researchToDeleteIndex = researchData.findIndex(
@@ -124,7 +124,7 @@ exports.deleteResearch = async (req, res) => {
   );
 
   if (researchToDeleteIndex === -1) {
-    return res.status(404).json({ error: "Research notice not found" });
+    return res.status(404).json({ message : "Research notice not found", data:[] });
   }
 
   // Remove the research data from the array
@@ -136,6 +136,6 @@ exports.deleteResearch = async (req, res) => {
     res.status(200).json({ message: "Research notice data deleted successfully" });
   } catch (error) {
     console.error("Error writing to file:", error);
-    return res.status(500).json({ error: "Error writing to file" });
+    return res.status(500).json({  message : error.message });
   }
 };

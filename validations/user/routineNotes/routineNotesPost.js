@@ -9,7 +9,6 @@ const routineNotesPostValidation = (data) => {
         "date.format": "Date must be in the format YYYY-MM-DD",
       }),
     description: Joi.string()
-    .min(5)
     .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
       .trim()
       .messages({

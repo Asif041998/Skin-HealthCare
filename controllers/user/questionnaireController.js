@@ -3,7 +3,6 @@ const Question = require('../../models/user/survey_questions');
 const Answer = require("../../models/user/survey_answers");
 const ValidateId = require('../../services/exceptionHandling');
 const { Op } = require('sequelize');
-const { use } = require('../../routers/admin/collaborators');
 
 // CREATE QUESTIONNAIRE
 let survey_no;
@@ -181,6 +180,50 @@ exports.getSurveysById = async (req, res) => {
         return res.status(400).json(err.message);
     }
 };
+
+//GET fitzpatrickSkinTone by user_id latest data
+exports.getFitzpatrickByUserId = async (req, res) => {
+    try {
+        const userId = req.user.id;
+
+        const surveyDetails = await Questionnaire.findAll({
+            where: { user_id: userId },
+            include: [
+                {
+                    model: Question,
+                    as: 'question',
+                    attributes: ['question'],
+                },
+                {
+                    model: Answer,
+                    as: 'answer',
+                    attributes: ['answer'],
+                },
+            ],
+        });
+
+        if (surveyDetails.length === 0)
+            return res.status(200).json({ message: "There is no survey with this id", data: { "Commitment": [] } });
+
+        const filterByQuestionIds = (questionIds) =>
+            surveyDetails.filter((detail) => questionIds.includes(detail.question_id));
+
+        const fitzpatrickSkinTone = filterByQuestionIds([13]);
+
+        // Access the last element directly
+        const lastFitzpatrickSkinTone = fitzpatrickSkinTone[fitzpatrickSkinTone.length - 1];
+
+        return res.status(200).json({
+            message: "Fitzpatrick skin tone details fetched successfully",
+            data: {
+                fitzpatrickSkinTone: [lastFitzpatrickSkinTone], // Wrap it in an array if needed
+            },
+        });
+    } catch (err) {
+        return res.status(400).json(err.message);
+    }
+};
+
 
 // UPDATE THE QUESTIONNAIRE BY  SURVEY-ID 
 exports.updateQuestionnaires = async (req, res) => {

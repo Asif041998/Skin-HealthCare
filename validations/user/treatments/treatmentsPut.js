@@ -3,8 +3,7 @@ const Joi = require('joi');
 const treatmentPutValidation = (data) => {
     const Schema = Joi.object({
         user_id: Joi.number().integer(),
-        name: Joi.string().min(3)
-            .max(50)
+        name: Joi.string()
             .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
             .trim()
             .messages({
@@ -14,7 +13,6 @@ const treatmentPutValidation = (data) => {
                     "Treatment Name can only contain alphabets ",
             }),
         description: Joi.string()
-            .min(5)
             .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
             .trim()
             .messages({

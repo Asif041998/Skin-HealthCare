@@ -65,9 +65,9 @@ exports.updateByIdRoutineNotes = async (req, res) => {
 
     if (!/^\d+$/.test(routineId)) {
       return res.status(400).json({
-          message: "Invalid ID format",
+        message: "Invalid ID format",
       });
-  }
+    }
 
     const [updatedRowsCount] = await RoutineNotes.update(updatedData, {
       where: { id: routineId },
@@ -138,19 +138,20 @@ exports.getByUserIdRoutineNotes = async (req, res) => {
 
     const routines = await RoutineNotes.findAll({
       where: { user_id: userId },
-      attributes: { exclude: ['user_id'] } 
+      order: [['date', 'DESC']],
+      attributes: { exclude: ['user_id'] }
     });
 
     if (!/^\d+$/.test(userId)) {
       return res.status(400).json({
-          message: "Invalid ID format",
+        message: "Invalid ID format",
       });
-  }
+    }
 
     if (!routines) {
       return res.status(200).json({
         message: "Routine Notes not found",
-        data:[]
+        data: []
       });
     }
 

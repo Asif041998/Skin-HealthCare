@@ -44,10 +44,14 @@ const User = sequelize.define(
     },
     delete_reason: {
       type: DataTypes.STRING,
-      allowNull:true,
+      allowNull: true,
     },
     deletedAt: {
       type: DataTypes.DATE,
+      allowNull: true,
+    },
+    fcm_token: {
+      type: DataTypes.STRING,
       allowNull: true,
     },
   },

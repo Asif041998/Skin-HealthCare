@@ -2,8 +2,10 @@ const con = require("../../database/connection");
 const SkinAnalysis = require("../../models/user/skinAnalysis");
 const skinAnalysisPostValidation = require("../../validations/user/skinAnalysis/post");
 const { Op } = require('sequelize');
+const ValidateId = require('../../services/exceptionHandling');
+const { Sequelize } = require('sequelize');
 
-
+// CREATE THE SKIN-ANALYSIS 
 exports.skinAnalysis = async (req, res) => {
   try {
     let userId = req.user.id;
@@ -12,17 +14,17 @@ exports.skinAnalysis = async (req, res) => {
       return res.status(400).send({ error: error.details[0].message });
     }
 
-    let { user_id, image_url, dark_spots, face_wrinkles, redness, hydration, skin_health, texture } = req.body;
-
+    let { user_id, image_url, dark_circle, skin_dullness, redness, hydration, skin_health, texture, hyperpigmentation } = req.body;
     const newSkinAnalysis = await SkinAnalysis.create({
       user_id,
       image_url,
-      dark_spots,
-      face_wrinkles,
+      dark_circle,
+      skin_dullness,
       redness,
       hydration,
       skin_health,
       texture,
+      hyperpigmentation
     });
 
     return res.status(201).json({
@@ -104,4 +106,41 @@ exports.getAllSkinAnalysisByUserId = async (req, res) => {
   }
 };
 
+// GET SKIN HEALTH ANALYSIS BY DATE
+exports.getAllSkinAnalysisByDate = async (req, res) => {
+  try {
+    const userId = req.params.user_id;
+    const tokenId = req.user.id;
+
+    const exceptionResult = await ValidateId(userId);
+    if (exceptionResult)
+      return res.status(400).json(exceptionResult);
+
+    if (userId == tokenId) {
+      const analysis = await SkinAnalysis.findAll({
+        where: { user_id: userId },
+        attributes: [
+          'id',
+          'user_id',
+          'skin_health',
+          [Sequelize.fn('DATE', Sequelize.col('createdAt')), 'createdAt']
+        ],
+        order: [['createdAt', 'DESC']]
+      });
+
+      if (analysis.length === 0)
+        return res.status(200).json({ message: "No skin health analysis found with this user_id", data: [] });
+
+      return res.status(200).json({
+        message: "Skin Health Analysis fetched successfully",
+        data: analysis
+      });
+    }
+    else
+      return res.status(200).json({ message: "No skin health analysis found with this user_id", data: [] });
+
+  } catch (err) {
+    return res.status(400).send(err.message);
+  }
+};
 

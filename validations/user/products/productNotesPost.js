@@ -3,8 +3,6 @@ const Joi = require("joi");
 const productNotesPostValidation = (data) => {
   const Schema = Joi.object({
     like_note: Joi.string()
-      .min(3)
-      .max(500)
       .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
       .trim()
       .messages({
@@ -14,8 +12,6 @@ const productNotesPostValidation = (data) => {
           "What I Like can only contain a combination of alphabets and numbers",
       }),
     dislike_note: Joi.string()
-      .min(5)
-      .max(500)
       .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
       .trim()
       .messages({
