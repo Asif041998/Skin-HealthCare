@@ -11,34 +11,34 @@ const UserAdminVerify = require("../../middlewares/userAdminVerify");
  *   description: Events management
  */
 
-  /**
-   * @swagger
-   * /api/v1/speakers:
-   *   post:
-   *     summary: Add new speaker
-   *     tags: [Speakers]
-   *     requestBody:
-   *       required: true
-   *       content:
-   *         application/json:
-   *           schema:
-   *             type: object
-   *             properties:
-   *               name:
-   *                 type: string
-   *                 example: Dr. John Doe
-   *               qualifications:
-   *                 type: string
-   *                 example: M.B.B.S/M.S
-   *               image_url: 
-   *                 type: string
-   *                 example: http://example.com
-   *     responses:
-   *       200:
-   *         description: Speaker added successfully....
-   *       400:
-   *         description: Bad request
-   */
+/**
+ * @swagger
+ * /api/v1/speakers:
+ *   post:
+ *     summary: Add new speaker
+ *     tags: [Speakers]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: Dr. John Doe
+ *               qualifications:
+ *                 type: string
+ *                 example: M.B.B.S/M.S
+ *               image_url: 
+ *                 type: string
+ *                 example: http://example.com
+ *     responses:
+ *       200:
+ *         description: Speaker added successfully....
+ *       400:
+ *         description: Bad request
+ */
 router.post("/speakers", adminVerify, Speakers.speakers);
 
 /**

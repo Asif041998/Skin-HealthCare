@@ -1,7 +1,7 @@
 const { DataTypes, Model } = require('sequelize');
 const sequelize = require('../../database/connection');
 
-class SkincareSuggestion extends Model {}
+class SkincareSuggestion extends Model { }
 
 SkincareSuggestion.init(
   {
@@ -37,11 +37,12 @@ SkincareSuggestion.init(
       type: DataTypes.INTEGER,
       allowNull: true,
     },
+
   },
   {
     sequelize,
     modelName: 'SkincareSuggestion',
-    tableName: 'skincare_suggestions', 
+    tableName: 'skincare_suggestions',
     timestamps: false,
   }
 );

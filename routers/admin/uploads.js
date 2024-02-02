@@ -11,28 +11,28 @@ const upload = require('../../middlewares/uploads');
  *   description: Uploads API
  */
 
-  /**
-   * @swagger
-   * /api/v1/uploads:
-   *   post:
-   *     summary: Add new image, video or audio file 
-   *     tags: [Uploads]
-   *     requestBody:
-   *       required: true
-   *       content:
-   *         multipart/form-data:
-   *           schema:
-   *             type: object
-   *             properties:
-   *               image_url: 
-   *                 type: string
-   *                 example: http://example.com
-   *     responses:
-   *       200:
-   *         description: File uploaded successfully....
-   *       400:
-   *         description: Bad request
-   */
+/**
+ * @swagger
+ * /api/v1/uploads:
+ *   post:
+ *     summary: Add new image, video or audio file 
+ *     tags: [Uploads]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               image_url: 
+ *                 type: string
+ *                 example: http://example.com
+ *     responses:
+ *       200:
+ *         description: File uploaded successfully....
+ *       400:
+ *         description: Bad request
+ */
 router.post('/uploads', upload.single('file'), Uploads.uploadFile);
 
 module.exports = router;

@@ -5,13 +5,15 @@ module.exports = function (req, res, next) {
     if (!token) return res.status(401).json({ message: "Access Denied, Token not provided" });
 
     try {
-
         try {
             const decodedToken = jwt.verify(token, process.env.TOKEN_SECRET);
             req.user = decodedToken;
             return next();
-        }
-        catch (errTokenSecret) {
+        } catch (errTokenSecret) {
+            if (errTokenSecret.name === 'TokenExpiredError') {
+                return res.status(401).json({ message: "Login expired, please login again." });
+            }
+
             const decodedRefreshToken = jwt.verify(token, process.env.REFRESH_TOKEN);
             req.admin = decodedRefreshToken;
             return next();
@@ -19,4 +21,4 @@ module.exports = function (req, res, next) {
     } catch (error) {
         res.status(400).json({ message: "Invalid Token" });
     }
-}
+};

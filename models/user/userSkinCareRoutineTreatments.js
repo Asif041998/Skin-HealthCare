@@ -17,7 +17,7 @@ const userSkinCareRoutineTreatments = sequelize.define("user_skin_care_routine_f
   freezeTableName: true
 });
 
-userSkinCareRoutineTreatments.belongsTo(Treatments,{
+userSkinCareRoutineTreatments.belongsTo(Treatments, {
   foreignKey: 'user_facial_treatment_id',
   as: 'treatment'
 });

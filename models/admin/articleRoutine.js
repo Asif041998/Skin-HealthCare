@@ -8,15 +8,19 @@ const ArticleRoutine = sequelize.define('article_skincare_routines', {
         autoIncrement: true,
         primaryKey: true
     },
-    routine_type: { 
+    routine_type: {
         type: DataTypes.STRING,
         allowNull: false
     },
     article_id: {
         type: DataTypes.INTEGER,
-        allowNull:  true
+        allowNull: true
     },
     skincare_suggestion_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true
+    },
+    display_order: {
         type: DataTypes.INTEGER,
         allowNull: true
     },
@@ -27,8 +31,8 @@ const ArticleRoutine = sequelize.define('article_skincare_routines', {
 ArticleRoutine.belongsTo(SkincareSuggestion, {
     foreignKey: 'skincare_suggestion_id',
     as: 'skincareSuggestion',
-    onDelete: 'CASCADE', // Add this line to set CASCADE on delete
-    onUpdate: 'CASCADE', // Add this line to set CASCADE on update
-  });
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+});
 
 module.exports = ArticleRoutine;

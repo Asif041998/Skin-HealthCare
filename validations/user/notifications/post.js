@@ -11,32 +11,32 @@ const notificationsPostValidation = (data) => {
                 "string.pattern.base":
                     "Type can only contain a combination of alphabets, numbers and special characters",
             }),
-            title: Joi.string()
+        title: Joi.string()
             .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
             .trim()
             .messages({
-                "string.empty" : "Please enter the Title",
+                "string.empty": "Please enter the Title",
                 "string.base": "Title must be a string",
                 "string.pattern.base":
                     "Title can only contain a combination of alphabets, numbers and special characters",
             }),
-            description: Joi.string()
+        description: Joi.string()
             .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
             .trim()
             .messages({
-                "string.empty" : "Please enter the Description",
+                "string.empty": "Please enter the Description",
                 "string.base": "Description must be a string",
                 "string.pattern.base":
                     "Description can only contain a combination of alphabets, numbers and special characters",
             }),
-            is_read: Joi.number().integer()
+        is_read: Joi.number().integer()
             .valid(0, 1)
             .default(0)
             .required()
             .messages({
-              'number.base': 'is_read must be a number',
-              'number.only': 'is_read must be either 0 or 1',
-              'any.required': 'is_read is required',
+                'number.base': 'is_read must be a number',
+                'number.only': 'is_read must be either 0 or 1',
+                'any.required': 'is_read is required',
             })
     });
     return Schema.validate(data);

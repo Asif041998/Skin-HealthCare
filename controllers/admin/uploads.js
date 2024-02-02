@@ -1,4 +1,5 @@
 
+// UPLOAD API FOR FILES
 exports.uploadFile = async (req, res) => {
     try {
         if (!req.file) {

@@ -54,6 +54,10 @@ const User = sequelize.define(
       type: DataTypes.STRING,
       allowNull: true,
     },
+    notification: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    }
   },
   {
     paranoid: true,

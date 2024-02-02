@@ -1,7 +1,7 @@
-const con = require("../../database/connection");
 const Prescriptions = require("../../models/user/prescriptions");
 const prescriptionsPostValidation = require("../../validations/user/prescriptions/prescriptionsPost");
 const prescriptionsPutValidation = require("../../validations/user/prescriptions/prescriptionsPut");
+
 // FOR prescriptions
 exports.prescriptions = async (req, res) => {
   try {

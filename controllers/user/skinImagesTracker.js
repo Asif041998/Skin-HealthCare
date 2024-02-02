@@ -32,7 +32,6 @@ exports.skinImagesTracker = async (req, res) => {
         });
 
     } catch (err) {
-        console.log(err.message)
         return res.status(400).send(err.message);
     }
 };

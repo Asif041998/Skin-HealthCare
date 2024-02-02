@@ -9,48 +9,48 @@ const userVerify = require('../../middlewares/userVerify');
  *   description: Allergies management
  */
 
-  /**
-   * @swagger
-   * /api/v1/allergies:
-   *   post:
-   *     summary: Add allergy information
-   *     tags: [Allergies]
-   *     requestBody:
-   *       required: true
-   *       content:
-   *         application/json:
-   *           schema:
-   *             type: object
-   *             properties:
-   *               allergen:
-   *                 type: string
-   *                 example: Egg
-   *               allergic_reaction:
-   *                 type: string
-   *                 example: Skin reactions, such as swelling, a rash, hives or eczema
-   *               healing_methods:
-   *                 type: string
-   *                 example: Antihistamines to ease symptoms, Emergency epinephrine shots
-   *     responses:
-   *       201:
-   *         description: Allergies added successfully....
-   *       400:
-   *         description: Bad request
-   *         content-type: application/json
-   *       401:
-   *         description: Unauthorized 
-   *         content-type: application/json
-   *       403:
-   *         description: Forbidden
-   *         content-type: application/json
-   *       404:
-   *         description: User not found
-   *         content-type: application/json
-   *       500:
-   *         description: Server Error
-   *         content-type: application/json
-   */
-router.post('/allergies',userVerify, allergyController.allergy);
+/**
+ * @swagger
+ * /api/v1/allergies:
+ *   post:
+ *     summary: Add allergy information
+ *     tags: [Allergies]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               allergen:
+ *                 type: string
+ *                 example: Egg
+ *               allergic_reaction:
+ *                 type: string
+ *                 example: Skin reactions, such as swelling, a rash, hives or eczema
+ *               healing_methods:
+ *                 type: string
+ *                 example: Antihistamines to ease symptoms, Emergency epinephrine shots
+ *     responses:
+ *       201:
+ *         description: Allergies added successfully....
+ *       400:
+ *         description: Bad request
+ *         content-type: application/json
+ *       401:
+ *         description: Unauthorized 
+ *         content-type: application/json
+ *       403:
+ *         description: Forbidden
+ *         content-type: application/json
+ *       404:
+ *         description: User not found
+ *         content-type: application/json
+ *       500:
+ *         description: Server Error
+ *         content-type: application/json
+ */
+router.post('/allergies', userVerify, allergyController.allergy);
 
 /**
  * @swagger
@@ -81,7 +81,7 @@ router.post('/allergies',userVerify, allergyController.allergy);
  *         description: Server Error
  *         content-type: application/json
  */
-router.get('/allergies',userVerify, allergyController.getAllAllergies);
+router.get('/allergies', userVerify, allergyController.getAllAllergies);
 
 /**
    * @swagger
@@ -129,7 +129,7 @@ router.get('/allergies',userVerify, allergyController.getAllAllergies);
    *         description: Server Error
    *         content-type: application/json
    */
-router.put('/allergies/:id',userVerify, allergyController.updateByIdAllergies);
+router.put('/allergies/:id', userVerify, allergyController.updateByIdAllergies);
 
 /**
  * @swagger
@@ -165,7 +165,7 @@ router.put('/allergies/:id',userVerify, allergyController.updateByIdAllergies);
  *         description: Server Error
  *         content-type: application/json
  */
-router.get('/allergy/:id',userVerify, allergyController.getByIdAllergy);
+router.get('/allergy/:id', userVerify, allergyController.getByIdAllergy);
 router.get('/allergies/:user_id', userVerify, allergyController.getByUserIdAllergy);
 
 module.exports = router;

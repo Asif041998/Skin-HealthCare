@@ -14,10 +14,10 @@ const prescriptionsPostValidation = (data) => {
       .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
       .trim()
       .messages({
-        "string.base": "Reason must be a string",
+        "string.base": "Reason for visit must be a string",
         "string.pattern.base":
-          "Reason can only contain a combination of alphabets and numbers",
-          "string.empty": "Please enter the Reason for Visit",
+          "Reason for visit can only contain a combination of alphabets and numbers",
+        "string.empty": "Please enter the reason for visit",
       }),
     diagnosis: Joi.string()
       .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)

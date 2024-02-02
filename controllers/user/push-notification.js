@@ -23,8 +23,6 @@ exports.sendPushNotification = async (req, res) => {
       },
     });
 
-    console.log(userTokens);
-
     if (userTokens.length > 0) {
       const notifications = await Notification.findOne({
         where: {

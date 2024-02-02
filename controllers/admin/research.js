@@ -70,7 +70,6 @@ exports.updateByIdResearch = async (req, res) => {
       updatedResearch: researchData[updateId], 
     });
   } catch (error) {
-    console.error("Error updating research:", error);
     return res.status(500).json({ message : error.message });
   }
 };
@@ -163,7 +162,6 @@ exports.deleteByIdResearch = async (req, res) => {
 
     res.status(200).json({ message: "Research data deleted successfully" });
   } catch (error) {
-    console.error("Error deleting research:", error);
     return res.status(500).json({ message : error.message });
   }
 };

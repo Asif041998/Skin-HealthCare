@@ -10,8 +10,8 @@ const UserFCM = sequelize.define(
       autoIncrement: true,
     },
     user_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
+      type: DataTypes.INTEGER,
+      allowNull: false,
     },
     fcm_token: {
       type: DataTypes.STRING,

@@ -1,4 +1,3 @@
-const con = require("../../database/connection");
 const Programs = require("../../models/admin/program");
 
 // CREATE THE PROGRAMS SET

@@ -14,7 +14,7 @@ const Products = sequelize.define("user_products", {
   },
   image: {
     type: DataTypes.STRING,
-    allowNull: true ,
+    allowNull: true,
   },
   name: {
     type: DataTypes.STRING,
@@ -54,7 +54,7 @@ const Products = sequelize.define("user_products", {
 
 Products.belongsTo(Product_type, {
   foreignKey: "product_type_id",
-  as: "product_type", 
+  as: "product_type",
 });
 
 module.exports = Products;

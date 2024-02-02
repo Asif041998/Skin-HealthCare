@@ -39,6 +39,36 @@ const officeHoursValidationsPut = (data) => {
       'number.base': 'Speaker ID must be a number',
       'number.integer': 'Speaker ID must be an integer',
     }),
+    dolby_viewers_url: Joi.string()
+      .trim()
+      .messages({
+        'string.base': 'Dolby viewers url must be a string',
+      }),
+    pubnub_channel_name: Joi.string()
+      .trim()
+      .messages({
+        'string.base': 'Pubnub channel name must be a string',
+      }),
+    pubnub_subscriber_key: Joi.string()
+      .trim()
+      .messages({
+        'string.base': 'Pubnub subscriber key must be a string',
+      }),
+    pubnub_publisher_key: Joi.string()
+      .trim()
+      .messages({
+        'string.base': 'Pubnub publisher key must be a string',
+      }),
+    dolby_channel_name: Joi.string()
+      .trim()
+      .messages({
+        'string.base': 'Dolby channel name must be a string',
+      }),
+    dolby_stream_id: Joi.string()
+      .trim()
+      .messages({
+        'string.base': 'Dolby stream must be a string',
+      }),
   });
   return Schema.validate(data);
 }

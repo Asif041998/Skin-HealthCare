@@ -9,12 +9,11 @@ const productPostValidation = (data) => {
                 "string.base": "Image URL must be a string",
             }),
         name: Joi.string()
-            // .regex(/^[A-Za-z][A-Za-z\s\-']+$/)
             .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
             .required()
             .trim()
             .messages({
-                "string.empty" : "Please enter the Product Name",
+                "string.empty": "Please enter the Product Name",
                 "string.base": "Product Name must be a string",
                 "string.pattern.base":
                     "Product Name can only contain a combination of alphabets and numbers",
@@ -23,7 +22,7 @@ const productPostValidation = (data) => {
             .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
             .trim()
             .messages({
-                "string.empty" : "Please enter the Brand Name",
+                "string.empty": "Please enter the Brand Name",
                 "string.base": "Brand name must be a string",
                 "string.pattern.base":
                     "Brand name can only contain a combination of alphabets and numbers",
@@ -40,7 +39,7 @@ const productPostValidation = (data) => {
             .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
             .trim()
             .messages({
-                "string.empty" : "Please enter the Location Purchased",
+                "string.empty": "Please enter the Location Purchased",
                 "string.base": "Location Purchased must be a string",
                 "string.pattern.base":
                     "Location Purchased can only contain a combination of alphabets and numbers",
@@ -48,7 +47,7 @@ const productPostValidation = (data) => {
         open_date: Joi.date()
             .iso()
             .messages({
-                "date.empty" : "Please enter the Open Date",
+                "date.empty": "Please enter the Open Date",
                 "date.base": "Open Date must be a date",
                 "date.format": "Open Date must be in the format YYYY-MM-DD",
             }),
@@ -61,7 +60,7 @@ const productPostValidation = (data) => {
 
             }),
         price: Joi.number()
-            .precision(2) 
+            .precision(2)
             .messages({
                 "number.base": "Price must be a number",
             }),
@@ -89,7 +88,7 @@ const productPutValidation = (data) => {
             .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
             .trim()
             .messages({
-                "string.empty" :"Please enter a Product Name",
+                "string.empty": "Please enter a Product Name",
                 "string.base": "Product Name must be a string",
                 "string.pattern.base":
                     "Product Name can only contain a combination of alphabets and numbers",
@@ -99,7 +98,7 @@ const productPutValidation = (data) => {
             .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
             .trim()
             .messages({
-                "string.empty" :"Please enter a Brand Name",
+                "string.empty": "Please enter a Brand Name",
                 "string.base": "Brand name must be a string",
                 "string.pattern.base":
                     "Brand name can only contain a combination of alphabets and numbers",
@@ -119,7 +118,7 @@ const productPutValidation = (data) => {
             .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
             .trim()
             .messages({
-                "string.empty" : "Please enter the Location Purchased",
+                "string.empty": "Please enter the Location Purchased",
                 "string.base": "Location Purchased must be a string",
                 "string.pattern.base":
                     "Location Purchased can only contain a combination of alphabets and numbers",
@@ -137,7 +136,7 @@ const productPutValidation = (data) => {
                 "number.integer": "Please choose Product Type",
             }),
         price: Joi.number()
-            .precision(2) 
+            .precision(2)
             .messages({
                 "number.base": "Price must be a number",
             }),

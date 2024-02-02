@@ -1,85 +1,102 @@
 const fs = require("fs");
 const path = require("path");
 
+// POST API FOR POLICY
 exports.policy = async (req, res) => {
-  const { privacyPolicy } = req.body;
+  const { privacyPolicy, android_privacyPolicy
+ } = req.body;
 
-  // Validate privacy policy
-  if (!privacyPolicy || typeof privacyPolicy !== "string") {
-    return res.status(400).json({ error: "Missing or invalid privacy policy" });
+  if (!privacyPolicy || typeof privacyPolicy !== "string" ) {
+    return res.status(400).json({ message: "Missing or invalid Privacy Policy" });
   }
 
-  // Trim leading and trailing spaces from the privacy policy
+  if (!android_privacyPolicy || typeof android_privacyPolicy !== "string" ) {
+    return res.status(400).json({ message: "Missing or invalid Privacy Policy" });
+  }
+
   const trimmedPrivacyPolicy = privacyPolicy.trim();
+  const trimmedAndroidPrivacyPolicy = android_privacyPolicy.trim();
 
-  // Check if privacy policy is empty after trimming
-  if (trimmedPrivacyPolicy === "") {
-    return res.status(400).json({ error: "Privacy policy cannot be empty" });
+  if (trimmedPrivacyPolicy === "" ) {
+    return res.status(400).json({ message: "Privacy Policy cannot be empty" });
   }
 
-  // Check if privacy policy contains only numbers or special characters
+  if (trimmedAndroidPrivacyPolicy === "" ) {
+    return res.status(400).json({ message: "Privacy Policy cannot be empty" });
+  }
+
   if (/^[0-9!@#$%^&*()_+{}\[\]:;<>,.?~\\/\-=|]+$/.test(trimmedPrivacyPolicy)) {
-    return res.status(400).json({ error: "Privacy policy cannot consist of only numbers or special characters" });
+    return res.status(400).json({ error: "Privacy Policy cannot consist of only numbers or special characters" });
+  }
+
+  if (/^[0-9!@#$%^&*()_+{}\[\]:;<>,.?~\\/\-=|]+$/.test(trimmedAndroidPrivacyPolicy)) {
+    return res.status(400).json({ error: "Privacy Policy cannot consist of only numbers or special characters" });
   }
 
   const filePath = path.join(__dirname, "policy.json");
 
-  // Read existing data from the file
   let policyData = [];
   try {
     const fileContent = fs.readFileSync(filePath, "utf8");
     policyData = JSON.parse(fileContent);
   } catch (error) {
-    // If the file doesn't exist or cannot be read, initialize with an empty array
   }
 
-  // Calculate the next available ID
   const nextId = policyData.length > 0 ? Math.max(...policyData.map(item => item.id)) + 1 : 1;
 
   const data = {
     id: nextId,
     privacyPolicy: trimmedPrivacyPolicy,
+    android_privacyPolicy: trimmedAndroidPrivacyPolicy,
   };
 
-  // Add the new data to the array
   policyData.push(data);
 
-  // Write the updated data back to the file
   fs.writeFileSync(filePath, JSON.stringify(policyData, null, 2));
 
-  res.status(200).json({ message: "Privacy policy data saved successfully", id: nextId });
+  res.status(200).json({ message: "Privacy Policy Notice data saved successfully", id: nextId });
 };
 
 exports.updatePolicy = async (req, res) => {
   const updateId = req.params.id;
-  const { privacyPolicy } = req.body;
+  const { privacyPolicy, android_privacyPolicy
+   } = req.body;
 
-  // Validate policy policy
   if (!privacyPolicy || typeof privacyPolicy !== "string") {
-    return res.status(400).json({ error: "Missing or invalid privacy policy" });
+    return res.status(400).json({ error: "Missing or invalid Privacy Policy" });
   }
 
-  // Trim leading and trailing spaces from the privacy policy
+  if (!android_privacyPolicy || typeof android_privacyPolicy !== "string") {
+    return res.status(400).json({ error: "Missing or invalid Privacy Policy" });
+  }
+
   const trimmedPrivacyPolicy = privacyPolicy.trim();
+  const trimmedAndroidPrivacyPolicy = android_privacyPolicy.trim();
 
-  // Check if Privacy policy is empty after trimming
   if (trimmedPrivacyPolicy === "") {
-    return res.status(400).json({ error: "Privacy policy cannot be empty" });
+    return res.status(400).json({ error: "Privacy Policy cannot be empty" });
   }
 
-  // Check if Privacy policy contains only numbers or special characters
+  if (trimmedAndroidPrivacyPolicy === "") {
+    return res.status(400).json({ error: "Privacy Policy cannot be empty" });
+  }
+
   if (/^[0-9!@#$%^&*()_+{}\[\]:;<>,.?~\\/\-=|]+$/.test(trimmedPrivacyPolicy)) {
-    return res.status(400).json({ error: "Privacy policy cannot consist of only numbers or special characters" });
+    return res.status(400).json({ error: "Privacy Policy cannot consist of only numbers or special characters" });
+  }
+
+  if (/^[0-9!@#$%^&*()_+{}\[\]:;<>,.?~\\/\-=|]+$/.test(trimmedAndroidPrivacyPolicy)) {
+    return res.status(400).json({ error: "Privacy Policy cannot consist of only numbers or special characters" });
   }
 
   const filePath = path.join(__dirname, "policy.json");
 
-  let policyData = [];
+  let policyData = {};
   try {
     const fileContent = fs.readFileSync(filePath, "utf8");
     policyData = JSON.parse(fileContent);
   } catch (error) {
-    return res.status(500).json({  message : error.message });
+    return res.status(500).json({ message: error });
   }
 
   const policyToUpdate = policyData.find(
@@ -87,21 +104,21 @@ exports.updatePolicy = async (req, res) => {
   );
 
   if (!policyToUpdate) {
-    return res.status(404).json({ error: "Privacy policy not found", data:[] });
+    return res.status(404).json({ message: "Privacy Policy not found", data: [] });
   }
 
   policyToUpdate.privacyPolicy = trimmedPrivacyPolicy;
+  policyToUpdate.android_privacyPolicy = trimmedAndroidPrivacyPolicy;
 
   try {
-    // Write updated data back to the file
     fs.writeFileSync(filePath, JSON.stringify(policyData, null, 2));
-    res.status(200).json({ message: "Privacy policy data updated successfully" });
+    res.status(200).json({ message: "Privacy Policy data updated successfully" });
   } catch (error) {
-    console.error("Error writing to file:", error);
-    return res.status(500).json({ message : error.message });
+    return res.status(500).json({ message: error });
   }
 };
 
+// GET ALL API FOR POLICY
 exports.getAllPolicy = async (req, res) => {
   const filePath = path.join(__dirname, "policy.json");
 
@@ -109,18 +126,15 @@ exports.getAllPolicy = async (req, res) => {
   try {
     const fileContent = fs.readFileSync(filePath, "utf8");
     policyData = JSON.parse(fileContent);
-    let data ={
-      id: policyData[0].id,
-      privacyPolicy: policyData[0].privacyPolicy
-    }
-    res.status(200).json({data});
   } catch (error) {
-    return res.status(500).json({ message : error.message });
+    return res.status(500).json({ error: "Error reading policy data" });
   }
 
+  res.status(200).json({ policyData });
 };
 
-exports.deletePolicy = async (req, res) => {
+// DELETE API FOR POLICY
+exports.deletePolicy  = async (req, res) => {
   const deleteId = req.params.id;
 
   const filePath = path.join(__dirname, "policy.json");
@@ -130,7 +144,7 @@ exports.deletePolicy = async (req, res) => {
     const fileContent = fs.readFileSync(filePath, "utf8");
     policyData = JSON.parse(fileContent);
   } catch (error) {
-    return res.status(500).json({ message : error.message });
+    return res.status(500).json({ message: error });
   }
 
   const policyToDeleteIndex = policyData.findIndex(
@@ -138,18 +152,17 @@ exports.deletePolicy = async (req, res) => {
   );
 
   if (policyToDeleteIndex === -1) {
-    return res.status(404).json({ error: "Privacy policy not found", data:[] });
+    return res.status(404).json({ message: "Privacy Policy not found", data: [] });
   }
 
-  // Remove the policy data from the array
   policyData.splice(policyToDeleteIndex, 1);
 
   try {
-    // Write the updated data back to the file
     fs.writeFileSync(filePath, JSON.stringify(policyData, null, 2));
-    res.status(200).json({ message: "Privacy policy data deleted successfully" });
+    res.status(200).json({ message: "Privacy Policy data deleted successfully" });
   } catch (error) {
-    console.error("Error writing to file:", error);
-    return res.status(500).json({ message : error.message });
+    return res.status(500).json({ message: error });
   }
 };
+
+

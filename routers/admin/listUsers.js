@@ -32,7 +32,7 @@ const userVerify = require('../../middlewares/userVerify');
  *         description: Server Error
  *         content-type: application/json
  */
-router.get('/users',adminVerify, ListUsersController.listUsers);
+router.get('/users', adminVerify, ListUsersController.listUsers);
 
 /**
  * @swagger
@@ -68,7 +68,7 @@ router.get('/users',adminVerify, ListUsersController.listUsers);
  *         description: Server Error
  *         content-type: application/json
  */
-router.get('/user/:id',adminVerify, ListUsersController.getUserById);
+router.get('/user/:id', adminVerify, ListUsersController.getUserById);
 
 // /**
 //    * @swagger

@@ -151,16 +151,3 @@ exports.logOutAdmin = async (req, res) => {
     return res.status(400).send(err.message);
   }
 };
-
-
-// exports.logOutAdmin = async (req, res) => {
-//   const { token } = req.body;
-
-//   try {
-//     await BlacklistedToken.create({ token });
-//     res.json({ message: 'Logged out successfully' });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ message: 'Internal server error' });
-//   }
-// };

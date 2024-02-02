@@ -6,7 +6,7 @@ const goalPutValidation = (data) => {
       return helpers.error("date.min", { limit: new Date().setHours(0, 0, 0, 0) });
     }
     return value;
-  };  
+  };
 
   const Schema = Joi.object({
     user_id: Joi.number().integer(),
@@ -15,15 +15,15 @@ const goalPutValidation = (data) => {
       .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
       .trim()
       .messages({
-        "string.base": "Skin Concern Name must be a string",
+        "string.base": "Skin concern name must be a string",
         "string.pattern.base":
-          "Skin Concern Name can only contain a combination of alphabets and numbers",
-          "string.empty": "Please enter the Skin Concern Name",
+          "Skin concern name can only contain a combination of alphabets and numbers",
+        "string.empty": "Please enter the skin concern name",
       }),
     start_date: Joi.date().iso().messages({
       "date.base": "Start Date must be a date",
       "date.format": "Start Date must be in the format YYYY-MM-DD",
-      "date.empty" : "Please enter the Start Date",
+      "date.empty": "Please enter the Start Date",
     }),
     reached_date: Joi.date()
       .iso()

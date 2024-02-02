@@ -32,11 +32,11 @@ const Meditations = sequelize.define('events', {
         allowNull: true,
     },
     status: {
-        type: DataTypes.ENUM('active','cancelled'),
+        type: DataTypes.ENUM('active', 'cancelled'),
         allowNull: true,
     }
-}, 
-{ freezeTableName: true }
+},
+    { freezeTableName: true }
 );
 
 module.exports = Meditations;

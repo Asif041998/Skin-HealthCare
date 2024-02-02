@@ -1,10 +1,14 @@
-const con = require("../../database/connection");
 const Speakers = require("../../models/admin/speakers");
-const uploads = require("../../services/uploadFile");
+const speakerValidationsPost = require("../../validations/admin/speakers/speakerPost");
+const speakerValidationsPut = require("../../validations/admin/speakers/speakerPut");
 
 // CREATE THE SPEAKERS SET
 exports.speakers = async (req, res) => {
   try {
+    const { error } = speakerValidationsPost(req.body);
+    if (error) {
+      return res.status(400).send({ error: error.details[0].message });
+    }
     const speakerData = req.body.speakers;
 
     const savedSpeakers = await Promise.all(
@@ -49,15 +53,20 @@ exports.getAllSpeakers = async (req, res) => {
 //UPDATE SPEAKER BY ID
 exports.updateByIdSpeakers = async (req, res) => {
   try {
+    const { error } = speakerValidationsPut(req.body);
+    if (error) {
+      return res.status(400).send({ error: error.details[0].message });
+    }
+
     const speakerId = req.params.id;
     const updatedData = req.body.speakers[0]; // Assuming you send the updated data in the request body
     if (!/^\d+$/.test(speakerId)) {
       return res.status(400).json({
-          message: "Invalid ID format",
+        message: "Invalid ID format",
       });
-  }
+    }
     const [updatedRowsCount] = await Speakers.update(updatedData, {
-      where: { id: speakerId }
+      where: { id: speakerId },
     });
 
     if (updatedRowsCount === 0) {
@@ -70,13 +79,12 @@ exports.updateByIdSpeakers = async (req, res) => {
 
     return res.status(200).json({
       message: "Speaker updated successfully",
-      speaker: updatedSpeaker
+      speaker: updatedSpeaker,
     });
   } catch (err) {
     return res.status(400).json({ error: err.message });
   }
 };
-
 
 //Get by ID
 exports.getByIdSpeakers = async (req, res) => {
@@ -84,9 +92,9 @@ exports.getByIdSpeakers = async (req, res) => {
     const speakerId = req.params.id;
     if (!/^\d+$/.test(speakerId)) {
       return res.status(400).json({
-          message: "Invalid ID format",
+        message: "Invalid ID format",
       });
-  }
+    }
     const speaker = await Speakers.findByPk(speakerId);
 
     if (!speaker) {

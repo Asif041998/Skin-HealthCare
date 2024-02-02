@@ -4,13 +4,13 @@ const  User  = require('../../models/user/user');
 
 // Create a nodemailer transporter
 const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST,
-  port: process.env.EMAIL_PORT,
-  secure: true, // Use TLS
+  host: process.env.CONTACT_HOST,
+  port: process.env.CONTACT_PORT,
+  TLS : true, // Use TLS
   auth: {
-     user: process.env.EMAIL_USER,
-     pass: process.env.EMAIL_PASS
-  }
+     user: process.env.CONTACT_HELP,
+     pass: process.env.CONTACT_PASS
+  },
 });
 
 // Express Route for sending password reset emails
@@ -32,23 +32,21 @@ exports.forgotPassword = async (req, res) => {
 
     // Send the password reset email
     const mailOptions = {
-      from: process.env.SENDER_ADDRESS,
+      from: process.env.CONTACT_HELP,
       to: email,
-      subject: "K'ept Health Cares, Reset Password link",
-      text: `Click the following link to reset your password: ${process.env.RESET_PASSWORD_URL}/reset-password/${token}`,
+      subject: "K'ept Health, Reset Password link",
+      text: `Click the following link to reset your password: ${process.env.RESET_PASSWORD_URL}/#/reset-password/${token}`,
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error sending email.' });
+        res.status(500).json({ message: error });
       } else {
         res.status(200).json({ message: 'Password reset email sent.' });
       }
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Error Updating reset token.' });
+    res.status(500).json({ message: error });
   }
 };
 

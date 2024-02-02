@@ -21,19 +21,19 @@ const Cares = sequelize.define('cares', {
     },
     lastname: {
         type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: false,
     },
     state: {
         type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: false,
     },
     email: {
         type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: false,
     },
     skin_concern: {
         type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: false,
     }
 
 }, { freezeTableName: true });

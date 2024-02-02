@@ -116,7 +116,7 @@ const userVerify = require('../../middlewares/userVerify');
  *         description: Server Error
  *         content-type: application/json
  */
-router.post('/questionnaires', questionnaireController.questionnaires);
+router.post('/questionnaires', userVerify, questionnaireController.questionnaires);
 
 /**
  * @swagger

@@ -18,14 +18,9 @@ const GoalsProducts = sequelize.define("user_goal_products", {
   freezeTableName: true
 });
 
-GoalsProducts.belongsTo(Product,{
+GoalsProducts.belongsTo(Product, {
   foreignKey: 'user_product_id',
   as: 'product'
 });
-
-// GoalsProducts.belongsTo(Product_type, {
-//   foreignKey: "product_type_id",
-//   as: "product_type", 
-// });
 
 module.exports = GoalsProducts;

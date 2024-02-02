@@ -3,11 +3,15 @@ const Question = require('../../models/user/survey_questions');
 const Answer = require("../../models/user/survey_answers");
 const ValidateId = require('../../services/exceptionHandling');
 const { Op } = require('sequelize');
+const moment = require('moment');
+const cron = require('node-cron');
 
 // CREATE QUESTIONNAIRE
 let survey_no;
 exports.questionnaires = async (req, res) => {
     try {
+        console.log(req.user);
+        const userCreatedAt = req.user.createdAt;
         const surveyData = req.body.survey;
 
         const userDetails = await Questionnaire.findAll({ where: { user_id: surveyData[0].user_id } });
@@ -32,6 +36,54 @@ exports.questionnaires = async (req, res) => {
 
             return createdSurvey;
         }));
+
+        let surveyNotificationsSent = false;
+
+        const sendSurveyNotifications = async () => {
+            const surveyNotifications = {
+              userId,
+              message: `Hello ${firstName}!\nPlease take a moment to complete the survey on the application. Your insights will help us better understand your current skin condition and enhance our services.`,
+            };
+    
+            let usersToNotify = await Questionnaire.findAll({
+              where: { user_id: req.user.id },
+            });
+    
+            const existingNotification = await Notifications.findOne({
+              where: {
+                type: "survey",
+                title: "Please take the survey",
+                description: surveyNotifications.message,
+                is_read: 0,
+                user_id: userId,
+              },
+            });
+    
+            if (!existingNotification && usersToNotify.length == 0) {
+              await Notifications.create({
+                type: "survey",
+                title: "Please take the survey",
+                description: surveyNotifications.message,
+                is_read: 0,
+                user_id: userId,
+              });
+            }
+          };
+
+          const targetDateForTwoWeeks = moment(userCreatedAt).add(2, "weeks");
+
+          const twoWeekCronSchedule = `${targetDateForTwoWeeks.minutes()} ${targetDateForTwoWeeks.hours()} ${targetDateForTwoWeeks.date()} ${
+            targetDateForTwoWeeks.month() + 1
+          } *`;
+
+            const twoWeekTask = cron.schedule(twoWeekCronSchedule, async () => {
+              if (!surveyNotificationsSent) {
+                await sendSurveyNotifications();
+                surveyNotificationsSent = true;
+              }
+            });
+    
+            twoWeekTask.start();
         return res.status(200).json({
             message: 'Questionnaires and Images uploaded successfully',
             data: {
@@ -210,13 +262,12 @@ exports.getFitzpatrickByUserId = async (req, res) => {
 
         const fitzpatrickSkinTone = filterByQuestionIds([13]);
 
-        // Access the last element directly
         const lastFitzpatrickSkinTone = fitzpatrickSkinTone[fitzpatrickSkinTone.length - 1];
 
         return res.status(200).json({
             message: "Fitzpatrick skin tone details fetched successfully",
             data: {
-                fitzpatrickSkinTone: [lastFitzpatrickSkinTone], // Wrap it in an array if needed
+                fitzpatrickSkinTone: [lastFitzpatrickSkinTone],
             },
         });
     } catch (err) {
@@ -263,8 +314,7 @@ exports.updateQuestionnaires = async (req, res) => {
                             }
                         }
                     );
-                    // if (updated === 0)
-                    //     return res.status(400).json({ message: "No record updated" })
+                  
                 }
                 else {
                     const [updated] = await Questionnaire.update({ answer_text: survey.answer_text },

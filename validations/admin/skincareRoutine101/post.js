@@ -2,12 +2,6 @@ const Joi = require("joi");
 
 const skincareRoutine101PostValidations = (data) => {
   const schema = Joi.object({
-    // title: Joi.string().min(3).max(50).required().trim()
-    //     .pattern(new RegExp(/^[a-zA-Z0-9!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]+$/))
-    //     .messages({
-    //         "string.base": "Title must be a string",
-    //         "string.pattern.base": "Title can only contain a combination of alphabets, numbers, and special characters",
-    //     }),
     article_content: Joi.string()
       .required()
       .trim()

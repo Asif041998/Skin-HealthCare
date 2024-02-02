@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../../database/connection');
-// Define a 'User' model representing the 'users' table in the database
+
 const Admin = sequelize.define('users_admin', {
   id: {
     type: DataTypes.INTEGER,
@@ -24,7 +24,7 @@ const Admin = sequelize.define('users_admin', {
     type: DataTypes.STRING,
     allowNull: false,
   }
-  
-},{freezeTableName:true});
+
+}, { freezeTableName: true });
 
 module.exports = Admin;

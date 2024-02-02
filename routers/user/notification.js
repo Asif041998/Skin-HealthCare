@@ -10,44 +10,44 @@ const userVerify = require('../../middlewares/userVerify');
  *   description: Notification management
  */
 
-  /**
-   * @swagger
-   * /api/v1/notifications:
-   *   post:
-   *     summary: New notification
-   *     tags: [Notification]
-   *     requestBody:
-   *       required: true
-   *       content:
-   *         application/json:
-   *           schema:
-   *             type: object
-   *             properties:
-   *               content: 
-   *                 type: string
-   *                 example: Skin dryness
-   *               timeFrame:
-   *                 type: string
-   *                 example: 1 week
-   *     responses:
-   *       200:
-   *         description: Notification sent Successfully....
-   *       400:
-   *         description: Bad request
-   *         content-type: application/json
-   *       401:
-   *         description: Unauthorized 
-   *         content-type: application/json
-   *       403:
-   *         description: Forbidden
-   *         content-type: application/json
-   *       404:
-   *         description: User not found
-   *         content-type: application/json
-   *       500:
-   *         description: Server Error
-   *         content-type: application/json
-   */
+/**
+ * @swagger
+ * /api/v1/notifications:
+ *   post:
+ *     summary: New notification
+ *     tags: [Notification]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               content: 
+ *                 type: string
+ *                 example: Skin dryness
+ *               timeFrame:
+ *                 type: string
+ *                 example: 1 week
+ *     responses:
+ *       200:
+ *         description: Notification sent Successfully....
+ *       400:
+ *         description: Bad request
+ *         content-type: application/json
+ *       401:
+ *         description: Unauthorized 
+ *         content-type: application/json
+ *       403:
+ *         description: Forbidden
+ *         content-type: application/json
+ *       404:
+ *         description: User not found
+ *         content-type: application/json
+ *       500:
+ *         description: Server Error
+ *         content-type: application/json
+ */
 router.get('/notifications', userVerify, notificationController.notification);
 router.post('/notifications', adminVerify, notificationController.notifications);
 /**

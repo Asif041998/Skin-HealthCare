@@ -3,6 +3,7 @@ const CommonAndSignsArticleController = require('../../controllers/admin/commonA
 const adminVerify = require('../../middlewares/adminVerify');
 const UserAdminVerify = require('../../middlewares/userAdminVerify');
 
+// FOR IOS
 router.post('/skin-indexes', adminVerify, CommonAndSignsArticleController.createSkinHealthIndex);
 router.get('/skin-indexes', UserAdminVerify, CommonAndSignsArticleController.getSkinHealthIndex);
 router.get('/skin-indexes/:id', UserAdminVerify, CommonAndSignsArticleController.getSkinHealthIndexById);

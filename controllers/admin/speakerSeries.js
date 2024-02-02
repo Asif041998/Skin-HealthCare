@@ -1,4 +1,3 @@
-const con = require("../../database/connection");
 const Events = require("../../models/admin/events");
 const Speakers = require("../../models/admin/speakers"); // Import the Speakers model
 const speakerSeriesValidationsPut = require("../../validations/admin/speakerSeries/speakerSeriesPut");
@@ -23,6 +22,12 @@ exports.speakerSeries = async (req, res) => {
       file_type,
       status,
       speaker_id,
+      dolby_viewers_url,
+      pubnub_channel_name,
+      pubnub_subscriber_key,
+      pubnub_publisher_key,
+      dolby_channel_name,
+      dolby_stream_id,
     } = req.body;
 
     const createdEvent = await Events.create({
@@ -35,6 +40,12 @@ exports.speakerSeries = async (req, res) => {
       event_date: event_date,
       status: status,
       speaker_id: speaker_id,
+      dolby_viewers_url,
+      pubnub_channel_name,
+      pubnub_subscriber_key,
+      pubnub_publisher_key,
+      dolby_channel_name,
+      dolby_stream_id,
     });
 
     return res.status(200).json({
@@ -61,7 +72,8 @@ exports.updateSpeakerSeries = async (req, res) => {
         message: "Invalid ID format",
       });
     }
-    const { program_id, title, description, event_date, image_url, content_url, status, speaker_id } = req.body;
+    const { program_id, title, description, event_date, image_url, content_url, status, speaker_id,dolby_viewers_url,
+      pubnub_channel_name, pubnub_subscriber_key, pubnub_publisher_key, dolby_channel_name, dolby_stream_id } = req.body;
 
     const existingEvent = await Events.findByPk(eventId);
     if (!existingEvent) {
@@ -72,7 +84,8 @@ exports.updateSpeakerSeries = async (req, res) => {
     if (programId === 3) {
       await Events.update(
         {
-          program_id, title, description, event_date, image_url, content_url, status, speaker_id,
+          program_id, title, description, event_date, image_url, content_url, status, speaker_id,dolby_viewers_url,
+          pubnub_channel_name, pubnub_subscriber_key, pubnub_publisher_key, dolby_channel_name, dolby_stream_id
         },
         {
           where: { id: eventId }

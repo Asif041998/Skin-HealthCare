@@ -1,85 +1,128 @@
 const fs = require("fs");
 const path = require("path");
 
+// POST API FOR HIPPA
 exports.hippa = async (req, res) => {
-  const { hippaNotice } = req.body;
+  const {
+    hippaNotice, android_hippaNotice
+  } = req.body;
 
-  // Validate HIPPA notice
   if (!hippaNotice || typeof hippaNotice !== "string") {
-    return res.status(400).json({ error: "Missing or invalid HIPPA notice" });
+    return res.status(400).json({ message: "Missing or invalid Hippa Notice" });
   }
 
-  // Trim leading and trailing spaces from the HIPPA notice
+  if (!android_hippaNotice || typeof android_hippaNotice !== "string") {
+    return res.status(400).json({ message: "Missing or invalid Hippa Notice" });
+  }
+
   const trimmedHippaNotice = hippaNotice.trim();
+  const trimmedAndroidHippaNotice = android_hippaNotice.trim();
 
-  // Check if HIPPA notice is empty after trimming
   if (trimmedHippaNotice === "") {
-    return res.status(400).json({ error: "HIPPA notice cannot be empty" });
+    return res.status(400).json({ message: "Hippa Notice cannot be empty" });
   }
 
-  // Check if HIPPA notice contains only numbers or special characters
+  if (trimmedAndroidHippaNotice === "") {
+    return res.status(400).json({ message: "Hippa Notice cannot be empty" });
+  }
+
   if (/^[0-9!@#$%^&*()_+{}\[\]:;<>,.?~\\/\-=|]+$/.test(trimmedHippaNotice)) {
-    return res.status(400).json({ error: "HIPPA notice cannot consist of only numbers or special characters" });
+    return res
+      .status(400)
+      .json({
+        error:
+          "Hippa Notice cannot consist of only numbers or special characters",
+      });
+  }
+
+  if (/^[0-9!@#$%^&*()_+{}\[\]:;<>,.?~\\/\-=|]+$/.test(trimmedAndroidHippaNotice)) {
+    return res
+      .status(400)
+      .json({
+        error:
+          "Hippa Notice cannot consist of only numbers or special characters",
+      });
   }
 
   const filePath = path.join(__dirname, "hippa.json");
 
-  // Read existing data from the file
   let hippaData = [];
   try {
     const fileContent = fs.readFileSync(filePath, "utf8");
     hippaData = JSON.parse(fileContent);
-  } catch (error) {
-    // If the file doesn't exist or cannot be read, initialize with an empty array
-  }
+  } catch (error) {}
 
-  // Calculate the next available ID
-  const nextId = hippaData.length > 0 ? Math.max(...hippaData.map(item => item.id)) + 1 : 1;
+  const nextId =
+    hippaData.length > 0
+      ? Math.max(...hippaData.map((item) => item.id)) + 1
+      : 1;
 
   const data = {
     id: nextId,
     hippaNotice: trimmedHippaNotice,
+    android_hippaNotice: trimmedAndroidHippaNotice,
   };
 
-  // Add the new data to the array
   hippaData.push(data);
 
-  // Write the updated data back to the file
   fs.writeFileSync(filePath, JSON.stringify(hippaData, null, 2));
 
-  res.status(200).json({ message: "HIPPA Notice data saved successfully", id: nextId });
+  res
+    .status(200)
+    .json({ message: "Hippa Notice data saved successfully", id: nextId });
 };
 
+// UPDATE API FOR HIPPA
 exports.updateHippa = async (req, res) => {
   const updateId = req.params.id;
-  const { hippaNotice } = req.body;
+  const { hippaNotice, android_hippaNotice 
+  } = req.body;
 
-  // Validate HIPPA notice
   if (!hippaNotice || typeof hippaNotice !== "string") {
-    return res.status(400).json({ message : error.message });
+    return res.status(400).json({ error: "Missing or invalid Hippa Notice" });
   }
 
-  // Trim leading and trailing spaces from the HIPPA notice
+  if (!android_hippaNotice || typeof android_hippaNotice !== "string") {
+    return res.status(400).json({ error: "Missing or invalid Hippa Notice" });
+  }
+
   const trimmedHippaNotice = hippaNotice.trim();
+  const trimmedAndroidHippaNotice = android_hippaNotice.trim();
 
-  // Check if HIPPA notice is empty after trimming
   if (trimmedHippaNotice === "") {
-    return res.status(400).json({ error: "HIPPA notice cannot be empty" });
+    return res.status(400).json({ error: "Hippa Notice cannot be empty" });
   }
 
-  // Check if HIPPA notice contains only numbers or special characters
+  if (trimmedAndroidHippaNotice === "") {
+    return res.status(400).json({ error: "Hippa Notice cannot be empty" });
+  }
+
   if (/^[0-9!@#$%^&*()_+{}\[\]:;<>,.?~\\/\-=|]+$/.test(trimmedHippaNotice)) {
-    return res.status(400).json({ error: "HIPPA notice cannot consist of only numbers or special characters" });
+    return res
+      .status(400)
+      .json({
+        error:
+          "Hippa Notice cannot consist of only numbers or special characters",
+      });
+  }
+
+  if (/^[0-9!@#$%^&*()_+{}\[\]:;<>,.?~\\/\-=|]+$/.test(trimmedAndroidHippaNotice)) {
+    return res
+      .status(400)
+      .json({
+        error:
+          "Hippa Notice cannot consist of only numbers or special characters",
+      });
   }
 
   const filePath = path.join(__dirname, "hippa.json");
 
-  let hippaData = [];
+  let hippaData = {};
   try {
     const fileContent = fs.readFileSync(filePath, "utf8");
     hippaData = JSON.parse(fileContent);
   } catch (error) {
-    return res.status(500).json({  message : error.message });
+    return res.status(500).json({ message: error });
   }
 
   const hippaToUpdate = hippaData.find(
@@ -87,21 +130,23 @@ exports.updateHippa = async (req, res) => {
   );
 
   if (!hippaToUpdate) {
-    return res.status(404).json({ message : "HIPPA notice not found", data :[] });
+    return res
+      .status(404)
+      .json({ message: "Hippa Notice not found", data: [] });
   }
 
   hippaToUpdate.hippaNotice = trimmedHippaNotice;
+  hippaToUpdate.android_hippaNotice = trimmedAndroidHippaNotice;
 
   try {
-    // Write updated data back to the file
     fs.writeFileSync(filePath, JSON.stringify(hippaData, null, 2));
-    res.status(200).json({ message: "HIPPA notice data updated successfully" });
+    res.status(200).json({ message: "Hippa Notice data updated successfully" });
   } catch (error) {
-    console.error("Error writing to file:", error);
-    return res.status(500).json({  message : error.message });
+    return res.status(500).json({ message: error });
   }
 };
 
+// GET ALL API FOR HIPPA
 exports.getAllHippa = async (req, res) => {
   const filePath = path.join(__dirname, "hippa.json");
 
@@ -109,17 +154,14 @@ exports.getAllHippa = async (req, res) => {
   try {
     const fileContent = fs.readFileSync(filePath, "utf8");
     hippaData = JSON.parse(fileContent);
-    let data ={
-      id: hippaData[0].id,
-      hippaNotice: hippaData[0].hippaNotice
-    }
-    res.status(200).json({data});
   } catch (error) {
-    return res.status(500).json({  message : error.message });
+    return res.status(500).json({ error: "Error reading hippa data" });
   }
 
+  res.status(200).json({ hippaData });
 };
 
+// DELETE API FOR HIPPA
 exports.deleteHippa = async (req, res) => {
   const deleteId = req.params.id;
 
@@ -130,7 +172,7 @@ exports.deleteHippa = async (req, res) => {
     const fileContent = fs.readFileSync(filePath, "utf8");
     hippaData = JSON.parse(fileContent);
   } catch (error) {
-    return res.status(500).json({  message : error.message });
+    return res.status(500).json({ message: error });
   }
 
   const hippaToDeleteIndex = hippaData.findIndex(
@@ -138,18 +180,17 @@ exports.deleteHippa = async (req, res) => {
   );
 
   if (hippaToDeleteIndex === -1) {
-    return res.status(404).json({ message : "HIPPA notice not found", data:[] });
+    return res
+      .status(404)
+      .json({ message: "Hippa Notice not found", data: [] });
   }
 
-  // Remove the HIPPA data from the array
   hippaData.splice(hippaToDeleteIndex, 1);
 
   try {
-    // Write the updated data back to the file
     fs.writeFileSync(filePath, JSON.stringify(hippaData, null, 2));
-    res.status(200).json({ message: "HIPPA notice data deleted successfully" });
+    res.status(200).json({ message: "Hippa Notice data deleted successfully" });
   } catch (error) {
-    console.error("Error writing to file:", error);
-    return res.status(500).json({  message : error.message });
+    return res.status(500).json({ message: error });
   }
 };

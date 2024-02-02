@@ -95,11 +95,13 @@ const authRoute36 = require('./routers/admin/skincareSuggestion');
 const authRoute37 = require('./routers/admin/skincareRoutine101');
 const authRoute38 = require('./routers/user/care');
 const authRoute39 = require('./routers/admin/advocacyActivity');
+const authRoute40 = require('./routers/user/subscription');
 
 app.use('/api/v1', authRoute1, authRoute2, authRoute3, authRoute4, authRoute5, authRoute6, authRoute7, authRoute8,
   authRoute9, authRoute10, authRoute11, authRoute12, authRoute13, authRoute14, authRoute15, authRoute16, authRoute17,
   authRoute18, authRoute19, authRoute20, authRoute21, authRoute22, authRoute23, authRoute24, authRoute25,
-  authRoute27, authRoute28, authRoute30, authRoute31, authRoute32, authRoute33, authRoute34, authRoute35, authRoute36, authRoute37, authRoute38, authRoute39);
+  authRoute27, authRoute28, authRoute30, authRoute31, authRoute32, authRoute33, authRoute34, authRoute35, authRoute36,
+  authRoute37, authRoute38, authRoute39, authRoute40);
 
 app.listen(port, () => {
   console.log(`Server running on ${port}`);

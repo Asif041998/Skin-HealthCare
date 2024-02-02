@@ -232,6 +232,6 @@ router.get('/product/:id', userVerify, ProductController.getByIdProducts);
  *         description: Server Error
  *         content-type: application/json
  */
-router.get('/products/:user_id',userVerify, ProductController.getByUserIdProducts);
+router.get('/products/:user_id', userVerify, ProductController.getByUserIdProducts);
 
 module.exports = router;

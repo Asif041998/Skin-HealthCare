@@ -22,7 +22,15 @@ const skinIndexArticlesPostValidation = (data) => {
                 "string.base": "article_content must be a string",
                 "string.pattern.base":
                     "article_content can only contain a combination of alphabets and numbers",
-            }).required(),
+            }),
+        android_article_content: Joi.string().min(3)
+            .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
+            .trim()
+            .messages({
+                "string.base": "android_article_content must be a string",
+                "string.pattern.base":
+                    "android_article_content can only contain a combination of alphabets and numbers",
+            }),
         description: Joi.string()
             .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
             .trim()

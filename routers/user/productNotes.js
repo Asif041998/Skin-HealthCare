@@ -9,50 +9,50 @@ const userVerify = require('../../middlewares/userVerify');
  *   description: Products management
  */
 
-  /**
-   * @swagger
-   * /api/v1/product-notes:
-   *   post:
-   *     summary: Add product notes to the product
-   *     tags: [Product-Notes]
-   *     requestBody:
-   *       required: true
-   *       content:
-   *         application/json:
-   *           schema:
-   *             type: object
-   *             properties:
-   *               providerName:
-   *                 type: string
-   *                 example: John Doe
-   *               reasonForVisit:
-   *                 type: string
-   *                 example: Skin irritation
-   *               diagnoses:
-   *                 type: string
-   *                 example: John Doe
-   *               date:
-   *                 type: Date
-   *                 example: 03/08/2023
-   *     responses:
-   *       200:
-   *         description: Product notes added successfully....
-   *       400:
-   *         description: Bad request
-   *         content-type: application/json
-   *       401:
-   *         description: Unauthorized 
-   *         content-type: application/json
-   *       403:
-   *         description: Forbidden
-   *         content-type: application/json
-   *       404:
-   *         description: User not found
-   *         content-type: application/json
-   *       500:
-   *         description: Server Error
-   *         content-type: application/json
-   */
+/**
+ * @swagger
+ * /api/v1/product-notes:
+ *   post:
+ *     summary: Add product notes to the product
+ *     tags: [Product-Notes]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               providerName:
+ *                 type: string
+ *                 example: John Doe
+ *               reasonForVisit:
+ *                 type: string
+ *                 example: Skin irritation
+ *               diagnoses:
+ *                 type: string
+ *                 example: John Doe
+ *               date:
+ *                 type: Date
+ *                 example: 03/08/2023
+ *     responses:
+ *       200:
+ *         description: Product notes added successfully....
+ *       400:
+ *         description: Bad request
+ *         content-type: application/json
+ *       401:
+ *         description: Unauthorized 
+ *         content-type: application/json
+ *       403:
+ *         description: Forbidden
+ *         content-type: application/json
+ *       404:
+ *         description: User not found
+ *         content-type: application/json
+ *       500:
+ *         description: Server Error
+ *         content-type: application/json
+ */
 router.post('/product-notes', userVerify, productNotesController.productNotes);
 
 /**

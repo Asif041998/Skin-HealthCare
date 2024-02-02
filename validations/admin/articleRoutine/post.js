@@ -11,8 +11,8 @@ const articleRoutinePostValidations = (data) => {
         "string.pattern.base":
           "Name can contain a combination of alphabets, numbers, and special characters, but must include at least one alphabet character",
       }),
-      article_id: Joi.number().integer(),
-      skincare_suggestion_id: Joi.number().integer(),
+    article_id: Joi.number().integer(),
+    skincare_suggestion_id: Joi.number().integer(),
   });
   return Schema.validate(data);
 };

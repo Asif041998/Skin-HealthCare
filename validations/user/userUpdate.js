@@ -4,19 +4,19 @@ const Joi = require("joi");
 const userPutValidation = (data) => {
     const Schema = Joi.object({
         firstname: Joi.string().min(3).max(30)
-    .trim()
-    .regex(/^[A-Za-z\s\-.,''""']+$/)
+            .trim()
+            .regex(/^[A-Za-z\s\-.,''""']+$/)
             .messages({
-                "string.empty" : "Please enter the First Name",
+                "string.empty": "Please enter the first name",
                 "string.base": "First Name must be a string",
                 "string.pattern.base":
                     "First Name can only contain alphabets"
             }),
-    lastname: Joi.string().min(3).max(30)
-    .trim()
-    .regex(/^[A-Za-z\s\-.,''""']+$/)
+        lastname: Joi.string().min(3).max(30)
+            .trim()
+            .regex(/^[A-Za-z\s\-.,''""']+$/)
             .messages({
-                "string.empty" : "Please enter the Last Name",
+                "string.empty": "Please enter the last name",
                 "string.base": "Last Name must be a string",
                 "string.pattern.base":
                     "Last Name can only contain alphabets"

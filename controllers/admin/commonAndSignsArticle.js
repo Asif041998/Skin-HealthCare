@@ -23,6 +23,7 @@ exports.createSkinHealthIndex = async (req, res) => {
       description,
       image,
       article_content,
+      android_article_content,
       article_type,
       status,
       screen_image,
@@ -30,22 +31,11 @@ exports.createSkinHealthIndex = async (req, res) => {
       content_type,
     } = req.body;
 
-    const existingArticle = await Article.findOne({
-      where: { title, article_type },
-    });
-
-    if (existingArticle) {
-      return res
-        .status(409)
-        .json({
-          message: `Article of type '${article_type}' with this title already exists`,
-        });
-    }
-
     const skinArticle = await Article.create({
       title,
       description,
       article_content,
+      android_article_content,
       article_type,
       status,
       screen_image,
@@ -70,6 +60,7 @@ exports.createSkinHealthIndex = async (req, res) => {
       description,
       image: image,
       article_content,
+      android_article_content,
       article_type,
       status,
       screen_image,
@@ -82,17 +73,17 @@ exports.createSkinHealthIndex = async (req, res) => {
       data,
     });
   } catch (err) {
-    return res.status(400).json({ error: err.message });
+    return res.status(400).json({ message: err.message });
   }
 };
 
 // UPDATE SKIN HEALTH INDEX BY ID
 exports.updateSkinHealthIndex = async (req, res) => {
   try {
-    //  const { error } = skinIndexArticlesPutValidation(req.body);
-    // if (error) {
-    //     return res.status(400).send({ error: error.details[0].message });
-    // }
+    const { error } = skinIndexArticlesPutValidation(req.body);
+    if (error) {
+      return res.status(400).send({ error: error.details[0].message });
+    }
     const id = req.params.id;
     const exceptionResult = await ValidateId(id);
     if (exceptionResult) return res.status(400).json(exceptionResult);
@@ -160,14 +151,16 @@ exports.updateSkinHealthIndex = async (req, res) => {
       description: updatedData.description,
       image: updatedImage.map((img) => img.image_url),
       article_content: updatedData.article_content,
+      android_article_content: updatedData.android_article_content,
       article_type: updatedData.article_type,
       screen_image: updateData.screen_image,
       content_type: updateData.content_type,
       status: updatedData.status,
     };
 
-    return res.status(200).json({ message : "Skin health index updated successfully",
-        response
+    return res.status(200).json({
+      message: "Skin health index updated successfully",
+      response
     });
   } catch (err) {
     return res.status(400).json({ error: err.message });
@@ -261,12 +254,17 @@ const getDataRoutine101 = async (data) => {
             price: suggestion.price,
             description: suggestion.description,
             quantity: suggestion.quantity,
+            display_order: routine.display_order
           };
 
           if (suggestion.suggestion_type === "Product") {
             routineData.product.push(suggestionData);
+            routineData.product.sort((a, b) => a.display_order - b.display_order);
+
           } else if (suggestion.suggestion_type === "Treatment") {
             routineData.treatment.push(suggestionData);
+            routineData.treatment.sort((a, b) => a.display_order - b.display_order);
+
           }
         }
       }
@@ -276,6 +274,7 @@ const getDataRoutine101 = async (data) => {
         title: article.title,
         description: article.description,
         article_content: article.article_content,
+        android_article_content: article.android_article_content,
         article_type: article.article_type,
         content_type: article.content_type,
         screen_image: article.screen_image,
@@ -291,14 +290,19 @@ const getDataRoutine101 = async (data) => {
   return result;
 };
 
+
 const getDataWithImages = async (data) => {
   const result = await Promise.all(
     data.map(async (item) => {
       const articleId = item.id;
-      const articleImages = await ArticleImage.findAll({
-        where: { article_id: articleId },
-        attributes: { exclude: ["id", "article_id", "createdAt", "updatedAt"] },
-      });
+
+      const [articleImages] = await Promise.all([
+        ArticleImage.findAll({
+          where: { article_id: articleId },
+          attributes: { exclude: ["id", "article_id", "createdAt", "updatedAt"] },
+        }),
+      ]);
+
       const imageUrls = articleImages.map((image) => image.image_url);
 
       return {
@@ -307,6 +311,7 @@ const getDataWithImages = async (data) => {
         description: item.description,
         image: imageUrls,
         article_content: item.article_content,
+        android_article_content: item.android_article_content,
         article_type: item.article_type,
         screen_image: item.screen_image,
         screen_image_title: item.screen_image_title,
@@ -319,16 +324,17 @@ const getDataWithImages = async (data) => {
   return result;
 };
 
+
 exports.getSkinHealthIndex = async (req, res) => {
   try {
     const skinCondition = await getDataWithImages(
       await Article.findAll({
-        where: { article_type: "Common skin conditions" },
+        where: { article_type: "Common skin conditions", },
       })
     );
 
     const skinSigns = await getDataWithImages(
-      await Article.findAll({ where: { article_type: "Skin signs of health" } })
+      await Article.findAll({ where: { article_type: "Skin signs of health", } })
     );
 
     const skinRoutine101CommonArticle = await getDataWithImages(
@@ -363,27 +369,37 @@ exports.getSkinHealthIndex = async (req, res) => {
   }
 };
 
-//GET BY ID
+
+// GET BY ID
 exports.getSkinHealthIndexById = async (req, res) => {
   try {
     const id = req.params.id;
+
     const exceptionResult = await ValidateId(id);
     if (exceptionResult) return res.status(400).json(exceptionResult);
 
-    const article = await Article.findByPk(id);
+
+    const article = await Article.findOne({
+      where: { id: id, },
+    });
+
     if (!article) {
       return res.status(200).json({ message: "Article not found", data: [] });
     }
+
     const articleImages = await ArticleImage.findAll({
       where: { article_id: id },
       attributes: { exclude: ["createdAt", "updatedAt"] },
     });
+
     const image = articleImages.map((image) => image.image_url);
+
     const data = {
       id: article.id,
       title: article.title,
       description: article.description,
       article_content: article.article_content,
+      android_article_content: article.android_article_content,
       article_type: article.article_type,
       screen_image: article.screen_image,
       screen_image_title: article.screen_image_title,
@@ -396,6 +412,8 @@ exports.getSkinHealthIndexById = async (req, res) => {
       data,
     });
   } catch (err) {
-    return res.status(400).json({ error: err.message });
+    return res.status(400).json({ message: err.message });
   }
 };
+
+

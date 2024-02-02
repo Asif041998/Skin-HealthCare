@@ -1,4 +1,3 @@
-const con = require("../../database/connection");
 const SkinAnalysis = require("../../models/user/skinAnalysis");
 const skinAnalysisPostValidation = require("../../validations/user/skinAnalysis/post");
 const { Op } = require('sequelize');

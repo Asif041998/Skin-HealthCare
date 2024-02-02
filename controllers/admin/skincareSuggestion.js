@@ -1,4 +1,3 @@
-const con = require("../../database/connection");
 const SkincareSuggestion = require("../../models/admin/skincareSuggestion");
 const skincareSuggestionPostValidations = require("../../validations/admin/skincareSuggestions/post");
 const skincareSuggestionPutValidations = require("../../validations/admin/skincareSuggestions/put");
@@ -15,11 +14,8 @@ exports.skincareSuggestion = async (req, res) => {
 
     let { name, image_url, suggestion_type, price, description, quantity } = req.body;
 
-    if (suggestion_type === "Product") {
-      // if (!price || !quantity) {
-      //   return res.status(400).json({ message: "Price and quantity are required for product suggestions." });
-      // }
-    } else if (suggestion_type === "Treatment") {
+    if (suggestion_type === "Product") { }
+    else if (suggestion_type === "Treatment") {
       price = null;
       quantity = null;
     }
@@ -86,7 +82,7 @@ exports.getSkincareSuggestionByType1 = async (req, res) => {
     const { suggestionType } = req.query;
 
     const skincareSuggestions = await SkincareSuggestion.findAll({
-      where: {suggestion_type : suggestionType },
+      where: { suggestion_type: suggestionType },
     });
 
     if (skincareSuggestions.length === 0) {
@@ -107,91 +103,91 @@ exports.getSkincareSuggestionByType1 = async (req, res) => {
 
 
 //UPDATE SKINCARE SUGGESTIONS BY ID
-  exports.updateSkincareSuggestionByType = async (req, res) => {
-    try {
-  
-      const { error } = skincareSuggestionPutValidations(req.body);
-      if (error) {
-        return res.status(400).send({ message: error.details[0].message });
-      }
-  
-      const Id = req.params.id;
-      const updatedData = req.body;
-  
-      if (!/^\d+$/.test(Id)) {
-        return res.status(400).json({
-          message: "Invalid ID format",
-        });
-      }
-  
-      const [updatedRowsCount] = await SkincareSuggestion.update(updatedData, {
-        where: { id: Id },
-      });
-  
-      if (updatedRowsCount === 0) {
-        return res.status(200).json({
-          message: "Skincare Suggestion not found", data: []
-        });
-      }
-  
-      const updatedSkincareSuggestion = await SkincareSuggestion.findByPk(Id);
-  
-      return res.status(200).json({
-        message: "Skincare Suggestion updated successfully",
-        skincareSuggestion : updatedSkincareSuggestion,
-      });
-    } catch (err) {
-      return res.status(400).json({ message : err.message });
-    }
-  };
-  
+exports.updateSkincareSuggestionByType = async (req, res) => {
+  try {
 
-  //GET by ID
-  exports.getByIdSkincareSuggestion = async (req, res) => {
-    try {
-      const Id = req.params.id;
-  
-      if (!Id) {
-        return res.status(400).json({ message: 'Please provide a skincare suggestion ID.' });
-      }
-  
-      const skincareSuggestion = await SkincareSuggestion.findByPk(Id);
-  
-      if (!skincareSuggestion) {
-        return res.status(200).json({ message: 'Skincare suggestion not found.', data: [] });
-      }
-  
-      return res.status(200).json({
-        message: 'Skincare suggestion retrieved successfully',
-        skincareSuggestion,
-      });
-    } catch (err) {
-      return res.status(500).json({ message: err.message });
+    const { error } = skincareSuggestionPutValidations(req.body);
+    if (error) {
+      return res.status(400).send({ message: error.details[0].message });
     }
-  }
 
-  //DELETE API
-  exports.deleteByIdSkincareSuggestion = async (req, res) => {
-    try {
-      const Id = req.params.id;
-  
-      if (!Id) {
-        return res.status(400).json({ message: 'Please provide a skincare suggestion ID.' });
-      }
-  
-      const skincareSuggestion = await SkincareSuggestion.findByPk(Id);
-  
-      if (!skincareSuggestion) {
-        return res.status(200).json({ message: 'Skincare suggestion not found.', data: [] });
-      }
-  
-      await skincareSuggestion.destroy();
-  
-      return res.status(200).json({
-        message: 'Skincare suggestion deleted successfully',
+    const Id = req.params.id;
+    const updatedData = req.body;
+
+    if (!/^\d+$/.test(Id)) {
+      return res.status(400).json({
+        message: "Invalid ID format",
       });
-    } catch (err) {
-      return res.status(500).json({ message: err.message });
     }
+
+    const [updatedRowsCount] = await SkincareSuggestion.update(updatedData, {
+      where: { id: Id },
+    });
+
+    if (updatedRowsCount === 0) {
+      return res.status(200).json({
+        message: "Skincare Suggestion not found", data: []
+      });
+    }
+
+    const updatedSkincareSuggestion = await SkincareSuggestion.findByPk(Id);
+
+    return res.status(200).json({
+      message: "Skincare Suggestion updated successfully",
+      skincareSuggestion: updatedSkincareSuggestion,
+    });
+  } catch (err) {
+    return res.status(400).json({ message: err.message });
   }
-  
+};
+
+
+//GET by ID
+exports.getByIdSkincareSuggestion = async (req, res) => {
+  try {
+    const Id = req.params.id;
+
+    if (!Id) {
+      return res.status(400).json({ message: 'Please provide a skincare suggestion ID.' });
+    }
+
+    const skincareSuggestion = await SkincareSuggestion.findByPk(Id);
+
+    if (!skincareSuggestion) {
+      return res.status(200).json({ message: 'Skincare suggestion not found.', data: [] });
+    }
+
+    return res.status(200).json({
+      message: 'Skincare suggestion retrieved successfully',
+      skincareSuggestion,
+    });
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+}
+
+//DELETE API
+exports.deleteByIdSkincareSuggestion = async (req, res) => {
+  try {
+    const Id = req.params.id;
+
+    if (!Id) {
+      return res.status(400).json({ message: 'Please provide a skincare suggestion ID.' });
+    }
+
+    const skincareSuggestion = await SkincareSuggestion.findByPk(Id);
+
+    if (!skincareSuggestion) {
+      return res.status(200).json({ message: 'Skincare suggestion not found.', data: [] });
+    }
+
+    await skincareSuggestion.destroy();
+
+    return res.status(200).json({
+      message: 'Skincare suggestion deleted successfully',
+    });
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+}
+

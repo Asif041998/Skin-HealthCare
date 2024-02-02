@@ -1,5 +1,6 @@
 const User = require('../../models/user/user');
 
+// API FOR EMAIL EXISTS
 exports.emailExists = async (req, res) => {
     try {
         const { email } = req.body;

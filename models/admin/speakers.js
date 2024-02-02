@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../../database/connection');
-// Define a 'Speakers' model representing the 'Speakers' table in the database
+
 const Speakers = sequelize.define('speakers', {
   id: {
     type: DataTypes.INTEGER,
@@ -18,7 +18,7 @@ const Speakers = sequelize.define('speakers', {
   image_url: {
     type: DataTypes.STRING,
     allowNull: true,
-  },  
-},{freezeTableName:true});
+  },
+}, { freezeTableName: true });
 
 module.exports = Speakers;

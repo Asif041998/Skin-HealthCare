@@ -8,13 +8,13 @@ const ArticleVideo = sequelize.define('article_videos', {
         autoIncrement: true,
         primaryKey: true
     },
-    article_id : { 
+    article_id: {
         type: DataTypes.STRING,
         allowNull: true
     },
     video_title: {
         type: DataTypes.STRING,
-        allowNull:  false
+        allowNull: false
     },
     thumbnail_url: {
         type: DataTypes.STRING,

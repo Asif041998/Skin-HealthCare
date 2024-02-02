@@ -1,4 +1,3 @@
-const con = require("../../database/connection");
 const Treatments = require("../../models/user/treatments");
 const treatmentPostValidation = require("../../validations/user/treatments/treatmentsPost");
 const treatmentPutValidation = require("../../validations/user/treatments/treatmentsPut");
@@ -35,7 +34,6 @@ exports.treatments = async (req, res) => {
       treatments: newTreatments
     });
   } catch (err) {
-    console.error(err.message);
     return res.status(400).send(err.message);
   }
 };

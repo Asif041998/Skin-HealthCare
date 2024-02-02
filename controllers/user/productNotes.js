@@ -1,6 +1,5 @@
-const con = require("../../database/connection");
 const ProductNotes = require("../../models/user/prodNotes");
-const Products = require("../../models/user/products"); // Import the Speakers model
+const Products = require("../../models/user/products"); 
 const productNotesPostValidations = require("../../validations/user/products/productNotesPost");
 const productNotesPutValidations = require("../../validations/user/products/productNotesPut");
 

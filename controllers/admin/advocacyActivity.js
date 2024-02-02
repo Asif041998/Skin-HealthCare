@@ -1,4 +1,3 @@
-const con = require("../../database/connection");
 const Article = require("../../models/admin/articles");
 const ArticleImage = require("../../models/admin/articleImages");
 
@@ -73,6 +72,9 @@ exports.getByIdActivities = async (req, res) => {
             attributes: ['image_url'],
         });
 
+        // Choose the first image or concatenate all images into a comma-separated string
+        const imageString = images.map(image => image.image_url).join(', ');
+
         const formattedActivity = {
             id: activity.id,
             title: activity.title,
@@ -82,7 +84,7 @@ exports.getByIdActivities = async (req, res) => {
             screen_image: activity.screen_image,
             screen_image_title: activity.screen_image_title,
             status: activity.status,
-            images: images.map(image => image.image_url),
+            image: imageString,
         };
 
         return res.status(200).json({
@@ -90,7 +92,6 @@ exports.getByIdActivities = async (req, res) => {
             data: formattedActivity,
         });
     } catch (err) {
-        console.error(err);
         return res.status(500).json({ message: err.message });
     }
 };
@@ -114,6 +115,9 @@ exports.getAllActivities = async (req, res) => {
                 attributes: ['image_url'],
             });
 
+            
+            const imageString = images.map(image => image.image_url).join(', ');
+
             return {
                 id: activity.id,
                 title: activity.title,
@@ -123,7 +127,7 @@ exports.getAllActivities = async (req, res) => {
                 screen_image: activity.screen_image,
                 screen_image_title: activity.screen_image_title,
                 status: activity.status,
-                images: images.map(image => image.image_url),
+                image: imageString, 
             };
         }));
 
@@ -132,7 +136,6 @@ exports.getAllActivities = async (req, res) => {
             data: formattedActivities,
         });
     } catch (err) {
-        console.error(err);
         return res.status(500).json({ message: err.message });
     }
 };

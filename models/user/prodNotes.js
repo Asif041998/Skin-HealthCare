@@ -26,7 +26,7 @@ const ProductNotes = sequelize.define("user_product_notes", {
 
 ProductNotes.belongsTo(Products, {
   foreignKey: "user_product_id",
-  as: "products", // This should match the alias you used in the controller
+  as: "products",
 });
 
 module.exports = ProductNotes;

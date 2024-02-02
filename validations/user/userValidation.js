@@ -6,36 +6,34 @@ const registrationValidations = (data) => {
       .trim()
       .regex(/^[A-Za-z\s\-.,''""']+$/)
       .messages({
-        "string.base": "First Name must be a string",
+        "string.base": "First name must be a string",
         "string.pattern.base":
-          "First Name can only contain alphabets",
-          "string.empty": "Please enter the First Name",
+          "First name can only contain alphabets",
+        "string.empty": "Please enter the first name",
       }),
     lastname: Joi.string().min(3).max(30)
       .trim()
       .regex(/^[A-Za-z\s\-.,''""']+$/)
       .messages({
-        "string.base": "Last Name must be a string",
+        "string.base": "Last name must be a string",
         "string.pattern.base":
-          "Last Name can only contain alphabets",
-          "string.empty": "Please enter the Last Name",
+          "Last name can only contain alphabets",
+        "string.empty": "Please enter the last name",
 
       }),
     email: Joi.string().email().trim().messages({
-      "string.empty": "Please enter the Email",
+      "string.empty": "Please enter the email",
     }),
     password: Joi.string().trim().messages({
-      "string.empty": "Please enter the Password",
+      "string.empty": "Please enter the password",
     }),
-      // .min(8)
-      // .regex(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@#$%^&+=]).*$/)
-      // .message('Password must be 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.'),
-
     state: Joi.number().max(51),
     birth_year: Joi.number(),
-    race_id: Joi.number().max(12),
+    race_id: Joi.number().max(13),
     reset_token: Joi.string(),
-    fcm_token: Joi.string(),
+    fcm_token: Joi.string().trim().messages({
+      "string.empty": "Please provide the FCM token",
+    }),
   });
   return Schema.validate(data);
 };
@@ -43,13 +41,13 @@ const registrationValidations = (data) => {
 const loginValidations = (data) => {
   const Schema = Joi.object({
     email: Joi.string().email().required().trim().messages({
-      "string.empty" : "Please enter the Email",
+      "string.empty": "Please enter the email",
     }),
     password: Joi.string().required().trim().messages({
-      "string.empty" : "Please enter the Password",
+      "string.empty": "Please enter the password",
     }),
     fcm_token: Joi.string().trim().messages({
-      "string.empty" : "Please enter the FCM token",
+      "string.empty": "Please provide the FCM token",
     }),
   });
   return Schema.validate(data);

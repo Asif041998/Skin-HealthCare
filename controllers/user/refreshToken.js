@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 
+// GENERATE REFRESH TOKEN
 exports.generateRefreshToken = async (req, res) => {
     try {
         const { id, email } = req.body;

@@ -35,11 +35,11 @@ const SkinAnalysis = sequelize.define("skin_health_analysis", {
     type: DataTypes.INTEGER,
     allowNull: true,
   },
-  texture:{
+  texture: {
     type: DataTypes.INTEGER,
     allowNull: true,
   },
-  hyperpigmentation:{
+  hyperpigmentation: {
     type: DataTypes.INTEGER,
     allowNull: true,
   }

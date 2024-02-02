@@ -8,7 +8,7 @@ const treatmentPostValidation = (data) => {
             .required()
             .trim()
             .messages({
-                "string.empty" : "Please enter the Treatment Name",
+                "string.empty": "Please enter the Treatment Name",
                 "string.base": "Treatment Name must be a string",
                 "string.pattern.base":
                     "Treatment Name can only contain a combination of alphabets and numbers",

@@ -1,4 +1,3 @@
-const con = require("../../database/connection");
 const Meditation = require("../../models/admin/meditation");
 const ValidateId = require('../../services/exceptionHandling');
 const meditationValidationsPut = require('../../validations/admin/meditations/meditationPut');

@@ -22,6 +22,10 @@ const Article = sequelize.define('articles', {
     type: DataTypes.TEXT,
     allowNull: true,
   },
+  android_article_content: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+  },
   article_type: {
     type: DataTypes.STRING,
     allowNull: true,
@@ -42,10 +46,11 @@ const Article = sequelize.define('articles', {
     type: DataTypes.STRING,
     allowNull: true,
   },
+
 }, { freezeTableName: true });
 
 Article.hasMany(ArticleRoutine, { foreignKey: 'article_id' });
 Article.hasOne(ArticleVideo, { foreignKey: 'article_id' });
-Article.hasMany(ArticleImage, { foreignKey: 'article_id'});
+Article.hasMany(ArticleImage, { foreignKey: 'article_id' });
 
 module.exports = Article;

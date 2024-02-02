@@ -1,4 +1,3 @@
-const con = require("../../database/connection");
 const Products = require("../../models/user/products");
 const Products_Types = require("../../models/user/productTypes");
 const Routines = require("../../models/user/routines");
@@ -8,9 +7,17 @@ const userSkinCareRoutineTreatments = require("../../models/user/userSkinCareRou
 const routinePostValidation = require("../../validations/user/routines/routinePost");
 const routinePutValidation = require("../../validations/user/routines/routinePut");
 
-// POST ROUTINES 
+const cron = require("node-cron");
+const { Op } = require("sequelize");
+const moment = require("moment");
+const Notifications = require("../../models/user/notifications");
+
+// POST ROUTINES
 exports.routines = async (req, res) => {
   try {
+    let checkInNotificationsSent = false;
+
+    const userId = req.user.id;
     const { error } = routinePostValidation(req.body);
     if (error) return res.status(400).send({ error: error.details[0].message });
 
@@ -26,36 +33,43 @@ exports.routines = async (req, res) => {
     let routinesProduct;
     let routinesTreatment;
 
-    if (timeframe === 'Morning' || timeframe === 'Evening') {
-      routinesProduct = products ? await Promise.all(
-        products.map(async (result) => {
-          const createProduct = await userSkinCareRoutineProducts.create({
-            user_skin_care_routine_id: routineId,
-            user_product_id: result,
-          });
-          return createProduct;
-        })
-      ) : [];
+    if (timeframe === "Morning" || timeframe === "Evening") {
+      routinesProduct = products
+        ? await Promise.all(
+            products.map(async (result) => {
+              const createProduct = await userSkinCareRoutineProducts.create({
+                user_skin_care_routine_id: routineId,
+                user_product_id: result,
+              });
+              return createProduct;
+            })
+          )
+        : [];
     } else {
-      routinesProduct = products ? await Promise.all(
-        products.map(async (result) => {
-          const createProduct = await userSkinCareRoutineProducts.create({
-            user_skin_care_routine_id: routineId,
-            user_product_id: result,
-          });
-          return createProduct;
-        })
-      ) : [];
+      routinesProduct = products
+        ? await Promise.all(
+            products.map(async (result) => {
+              const createProduct = await userSkinCareRoutineProducts.create({
+                user_skin_care_routine_id: routineId,
+                user_product_id: result,
+              });
+              return createProduct;
+            })
+          )
+        : [];
 
-      routinesTreatment = treatments ? await Promise.all(
-        treatments.map(async (result) => {
-          const createTreatment = await userSkinCareRoutineTreatments.create({
-            user_skin_care_routine_id: routineId,
-            user_facial_treatment_id: result,
-          });
-          return createTreatment;
-        })
-      ) : [];
+      routinesTreatment = treatments
+        ? await Promise.all(
+            treatments.map(async (result) => {
+              const createTreatment =
+                await userSkinCareRoutineTreatments.create({
+                  user_skin_care_routine_id: routineId,
+                  user_facial_treatment_id: result,
+                });
+              return createTreatment;
+            })
+          )
+        : [];
     }
 
     const responseObject = {
@@ -65,15 +79,78 @@ exports.routines = async (req, res) => {
       product: routinesProduct,
       treatment: routinesTreatment,
     };
+
+    try {
+
+      const sendCheckInNotifications = async () => {
+        const eightWeekNotifications = {
+          userId,
+          message: "It's your time to create a routine for skin health",
+        };
+
+        await Notifications.create({
+          type: "normal",
+          title: "Routine Check In Notification",
+          description: eightWeekNotifications.message,
+          is_read: 0,
+          user_id: userId,
+        });
+
+        checkInNotificationsSent = false;
+
+      };
+      const scheduleEightWeekCheckIn = async (userId) => {
+        const latestRoutine = await Routines.findOne({
+          where: {
+            user_id: userId,
+            createdAt: {
+              [Op.not]: null,
+            },
+          },
+          order: [["createdAt", "DESC"]],
+        });
+
+        if (latestRoutine) {
+          const targetDateForEightWeeks = moment(latestRoutine.createdAt).add(
+            8,
+            "weeks"
+          );
+
+          const eightWeekCronSchedule = `${targetDateForEightWeeks.minutes()} ${targetDateForEightWeeks.hours()} ${targetDateForEightWeeks.date()} ${
+            targetDateForEightWeeks.month() + 1
+          } *`;
+
+          if (
+            moment(latestRoutine.createdAt).year() == moment(new Date()).year()
+          ) {
+            const eightWeekTask = cron.schedule(
+              eightWeekCronSchedule,
+              async () => {
+                if (!checkInNotificationsSent) {
+                  console.log(
+                    "Running Routine Check-In notification scheduler..."
+                  );
+                  await sendCheckInNotifications(userId);
+                  checkInNotificationsSent = true;
+                }
+              }
+            );
+
+            eightWeekTask.start();
+          }
+        }
+      };
+
+      scheduleEightWeekCheckIn(userId);
+    } catch (error) {}
     return res.status(201).json({
       message: "Routines added successfully",
       data: responseObject,
     });
   } catch (err) {
-    return res.status(400).json({message : err.message});
+    return res.status(400).json({ message: err.message });
   }
 };
-
 
 //GET BY USER ID ROUTINES
 exports.getByUserIdRoutines = async (req, res) => {
@@ -90,7 +167,10 @@ exports.getByUserIdRoutines = async (req, res) => {
       where: {
         user_id: userId,
       },
-      order: [["timeframe", "ASC"], ["createdAt", "DESC"]],
+      order: [
+        ["timeframe", "ASC"],
+        ["createdAt", "DESC"],
+      ],
     });
 
     const responseObject = [];
@@ -148,7 +228,7 @@ exports.getByUserIdRoutines = async (req, res) => {
         user_id: routine.user_id,
         timeframe: routine.timeframe,
         products,
-        treatments, 
+        treatments,
       });
     }
 
@@ -171,8 +251,6 @@ exports.getByUserIdRoutines = async (req, res) => {
   }
 };
 
-
-
 //UPDATE Routines BY ID
 exports.updateByIdRoutines = async (req, res) => {
   try {
@@ -190,7 +268,9 @@ exports.updateByIdRoutines = async (req, res) => {
 
     const existRoutines = await Routines.findByPk(id);
     if (!existRoutines)
-      return res.status(200).json({ message: "No such routines with this id", data: [] });
+      return res
+        .status(200)
+        .json({ message: "No such routines with this id", data: [] });
 
     const [updatedRoutineCount] = await Routines.update(updatedData, {
       where: { id: id },
@@ -282,7 +362,6 @@ exports.updateByIdRoutines = async (req, res) => {
         },
       ],
     });
-
 
     const responseObject = {
       routines,

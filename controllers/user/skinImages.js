@@ -1,15 +1,10 @@
 const SkinImages = require("../../models/user/skin_images");
-const skinPostValidation = require('../../validations/user/skinImages/skinPost');
 const skinPutValidation = require('../../validations/user/skinImages/skinPut');
 const ValidateId = require('../../services/exceptionHandling');
 
 // ADD SKIN-IMAGES
 exports.skinImages = async (req, res) => {
     try {
-
-        // const { error } = skinPostValidation(req.body);
-        // if (error)
-        //     return res.status(400).send({ error: error.details[0].message });
 
         let { user_goal_id, image_date, image_url } = req.body;
 
@@ -32,7 +27,6 @@ exports.skinImages = async (req, res) => {
         });
 
     } catch (err) {
-        console.log(err.message)
         return res.status(400).send(err.message);
     }
 };

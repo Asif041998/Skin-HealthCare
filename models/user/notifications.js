@@ -27,6 +27,7 @@ const Notifications = sequelize.define("notifications", {
     type: DataTypes.INTEGER,
     allowNull: true,
   },
+
 }, {
   freezeTableName: true
 });

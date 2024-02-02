@@ -81,7 +81,7 @@ exports.goals = async (req, res) => {
             product: goalsProduct
         }
         return res.status(201).json({
-            message: "Goals added successfully",
+            message: "Skincare goals added successfully",
             data: responseObject
         });
 
@@ -109,7 +109,7 @@ exports.getGoalsByType = async (req, res) => {
         });
 
         if (goals.length === 0)
-            return res.status(200).json({ message: "No goals found with this user_id", data: { "goals": [] } });
+            return res.status(200).json({ message: "No skincare goals found with this user_id", data: { "goals": [] } });
 
         const userGoalId = goals[0].id;
 
@@ -177,7 +177,7 @@ exports.getGoalsByType = async (req, res) => {
         };
 
         return res.status(200).json({
-            message: 'Goals list fetched',
+            message: 'Skincare goals list fetched',
             data: responseObject
         });
     } catch (err) {
@@ -186,152 +186,6 @@ exports.getGoalsByType = async (req, res) => {
 };
 
 //UPDATE Goals BY ID
-// exports.updateByIdGoals = async (req, res) => {
-//     try {
-//         const { error } = goalPutValidation(req.body);
-//         if (error)
-//             return res.status(400).send({ error: error.details[0].message });
-
-//         const id = req.params.id;
-//         const updatedData = req.body;
-//         const exceptionResult = await ValidateId(id);
-//         if (exceptionResult)
-//             return res.status(400).json(exceptionResult);
-
-//         const userId = req.user.id;
-//         const userExist = await Goals.findOne({ where: { user_id: userId, id: id } });
-//         if (!userExist)
-//             return res.status(200).json({ message: "No user found with this id", data: { "goals": [] } })
-
-//         const [updatedGoalsCount] = await Goals.update(updatedData, {
-//             where: { id: id },
-//         });
-
-//         if (updatedGoalsCount === 0) {
-//             return res.status(404).json({
-//                 message: "Goals not found",
-//             });
-//         }
-
-//         if (req.body.prescriptions) {
-//             const prescriptions = req.body.prescriptions;
-//             await GoalsPrescriptions.destroy({
-//                 where: {
-//                     user_goal_id: id,
-//                 },
-//             });
-//             for (let i = 0; i < prescriptions.length; i++) {
-//                 const prescriptionId = prescriptions[i];
-
-//                 await GoalsPrescriptions.create({
-//                     user_goal_id: id,
-//                     user_prescription_id: prescriptionId,
-//                 });
-//             }
-//         }
-//         if (req.body.treatments) {
-//             const treatments = req.body.treatments;
-//             await GoalsTreatments.destroy({
-//                 where: {
-//                     user_goal_id: id,
-//                 },
-//             });
-//             for (let i = 0; i < treatments.length; i++) {
-//                 const treatmentId = treatments[i];
-
-//                 await GoalsTreatments.create({
-//                     user_goal_id: id,
-//                     user_facial_treatment_id: treatmentId,
-//                 });
-//             }
-//         }
-//         if (req.body.products) {
-//             const products = req.body.products;
-//             await GoalsProducts.destroy({
-//                 where: {
-//                     user_goal_id: id,
-//                 },
-//             });
-//             for (let i = 0; i < products.length; i++) {
-//                 const productId = products[i];
-
-//                 await GoalsProducts.create({
-//                     user_goal_id: id,
-//                     user_product_id: productId,
-//                 });
-//             }
-//         }
-
-//         const goals = await Goals.findByPk(id);
-//         const prescription = await GoalsPrescriptions.findAll({
-//             where: {
-//                 user_goal_id: id,
-//             },
-//             order: [['createdAt', 'DESC']],
-//             // limit:1,
-//             include: [
-//                 {
-//                     model: Prescription,
-//                     as: 'prescription',
-//                     attributes: ['provider', 'reason', 'diagnosis', 'visit_date'],
-//                 },
-//             ],
-//         });
-//         const treatment = await GoalsTreatments.findAll({
-//             where: {
-//                 user_goal_id: id,
-//             },
-//             order: [['createdAt', 'DESC']],
-//             // limit:1,
-//             include: [
-//                 {
-//                     model: Treatment,
-//                     as: 'treatment',
-//                     attributes: ['name', 'description'],
-//                 },
-//             ],
-//         });
-//         const product = await GoalsProducts.findAll({
-//             where: {
-//                 user_goal_id: id,
-//             },
-//             order: [['createdAt', 'DESC']],
-//             // limit:1,
-//             include: [
-//                 {
-//                     model: Product,
-//                     as: 'product',
-//                     attributes: ['brand', 'name', 'image', 'description', 'purchase_location', 'open_date',
-//                         'product_type_id', 'price', 'expiration_date'],
-
-//                     include: [
-//                         {
-//                             model: Products_Types,
-//                             as: "product_type",
-//                             attributes: ["name", "expiration_duration_days"],
-//                         },
-//                     ]
-//                 },
-//             ],
-
-//         })
-//         const responseObject = {
-//             goals,
-//             prescription,
-//             treatment,
-//             product,
-//         };
-
-//         return res.status(200).json({
-//             message: "Goals updated successfully",
-//             goals: responseObject,
-//         });
-//     } catch (err) {
-//         return res.status(400).json({ error: err.message });
-//     }
-// };
-
-
 exports.updateByIdGoals = async (req, res) => {
     try {
         const { error } = goalPutValidation(req.body);
@@ -353,7 +207,7 @@ exports.updateByIdGoals = async (req, res) => {
 
         if (updatedGoalsCount === 0) {
             return res.status(404).json({
-                message: "Goals not found",
+                message: "Skincare goals not found",
             });
         }
 
@@ -415,11 +269,10 @@ exports.updateByIdGoals = async (req, res) => {
         };
 
         return res.status(200).json({
-            message: "Goals updated successfully",
+            message: "Skincare goals updated successfully",
             goals: responseObject,
         });
     } catch (err) {
         return res.status(400).json({ error: err.message });
     }
 };
-

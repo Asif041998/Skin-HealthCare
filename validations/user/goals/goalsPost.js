@@ -1,6 +1,6 @@
 const Joi = require("joi");
 
-const goalPostValidation = (data) => { 
+const goalPostValidation = (data) => {
 
   const Schema = Joi.object({
     user_id: Joi.number().integer().required(),
@@ -9,10 +9,10 @@ const goalPostValidation = (data) => {
       .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
       .trim()
       .messages({
-        "string.base": "Skin Concern Name must be a string",
+        "string.base": "Skin concern name must be a string",
         "string.pattern.base":
-          "Skin Concern Name can only contain a combination of alphabets and numbers",
-        "string.empty" : "Please enter the Skin Concern Name"
+          "Skin concern name can only contain a combination of alphabets and numbers",
+        "string.empty": "Please enter the skin concern name"
       }),
     start_date: Joi.date().iso().messages({
       "date.base": "Start_date must be a date",

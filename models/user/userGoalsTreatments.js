@@ -17,7 +17,7 @@ const GoalsTreatments = sequelize.define("user_goal_facial_treatments", {
   freezeTableName: true
 });
 
-GoalsTreatments.belongsTo(Treatment,{
+GoalsTreatments.belongsTo(Treatment, {
   foreignKey: 'user_facial_treatment_id',
   as: 'treatment'
 });

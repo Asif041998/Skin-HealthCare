@@ -7,7 +7,7 @@ const treatmentPutValidation = (data) => {
             .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
             .trim()
             .messages({
-                "string.empty" : "Please enter a Treatment Name",
+                "string.empty": "Please enter a Treatment Name",
                 "string.base": "Treatment Name must be a string",
                 "string.pattern.base":
                     "Treatment Name can only contain alphabets ",

@@ -1,4 +1,3 @@
-const con = require("../../database/connection");
 const Allergies = require("../../models/user/allergies");
 const allergiesPostValidation = require("../../validations/user/allergies/allergiesPost");
 const allergiesPutValidation = require("../../validations/user/allergies/allergiesPut");

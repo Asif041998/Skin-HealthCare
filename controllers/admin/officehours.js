@@ -1,6 +1,5 @@
-const con = require("../../database/connection");
 const Events = require("../../models/admin/events");
-const Speakers = require("../../models/admin/speakers"); // Import the Speakers model
+const Speakers = require("../../models/admin/speakers"); 
 const officeHoursValidationsPost = require("../../validations/admin/officeHours/officeHoursPost")
 const officeHoursValidationsPut = require("../../validations/admin/officeHours/officeHoursPut")
 const ValidateId = require('../../services/exceptionHandling');
@@ -23,6 +22,12 @@ exports.officeHours = async (req, res) => {
       content_url,
       status,
       speaker_id,
+      dolby_viewers_url,
+      pubnub_channel_name,
+      pubnub_subscriber_key,
+      pubnub_publisher_key,
+      dolby_channel_name,
+      dolby_stream_id,
     } = req.body;
 
     // Create the event
@@ -35,6 +40,12 @@ exports.officeHours = async (req, res) => {
       event_date: event_date,
       status: status,
       speaker_id: speaker_id,
+      dolby_viewers_url,
+      pubnub_channel_name,
+      pubnub_subscriber_key,
+      pubnub_publisher_key,
+      dolby_channel_name,
+      dolby_stream_id,
     });
 
     return res.status(200).json({
@@ -59,7 +70,8 @@ exports.updateOfficeHours = async (req, res) => {
     if (exceptionResult)
       return res.status(400).json(exceptionResult);
 
-    const { program_id, title, description, event_date, image_url, content_url, status, speaker_id } = req.body;
+    const { program_id, title, description, event_date, image_url, content_url, status, speaker_id, dolby_viewers_url,
+      pubnub_channel_name, pubnub_subscriber_key, pubnub_publisher_key, dolby_channel_name, dolby_stream_id } = req.body;
 
     const existingEvent = await Events.findByPk(eventId);
     if (!existingEvent) {
@@ -70,7 +82,8 @@ exports.updateOfficeHours = async (req, res) => {
     if (programId === 4) {
       await Events.update(
         {
-          program_id, title, description, event_date, image_url, content_url, status, speaker_id,
+          program_id, title, description, event_date, image_url, content_url, status, speaker_id, dolby_viewers_url,
+          pubnub_channel_name, pubnub_subscriber_key, pubnub_publisher_key, dolby_channel_name, dolby_stream_id
         },
         {
           where: { id: eventId }
@@ -123,14 +136,14 @@ exports.getAllOfficeHours = async (req, res) => {
 // GET A SPECIFIC OFFICE-HOURS EVENT BY PROGRAM ID
 exports.getByProgramIdOfficeHours = async (req, res) => {
   try {
-    const programId = req.params.program_id; // Use 'programId' to match the parameter in the route definition
+    const programId = req.params.program_id;
     const exceptionResult = await ValidateId(programId);
     if (exceptionResult)
       return res.status(400).json(exceptionResult);
 
     if (programId == 4) {
       const event = await Events.findAll({
-        where: { program_id: programId }, // Filter by program_id
+        where: { program_id: programId }, 
         include: [
           {
             model: Speakers,
@@ -162,12 +175,11 @@ exports.getByProgramIdOfficeHours = async (req, res) => {
 // GET A SPECIFIC OFFICE-HOURS EVENT BY ID
 exports.getByIdOfficeHours = async (req, res) => {
   try {
-    const eventId = req.params.id; // Use 'eventId' to match the parameter in the route definition
+    const eventId = req.params.id; 
     const exceptionResult = await ValidateId(eventId);
     if (exceptionResult)
       return res.status(400).json(exceptionResult);
 
-    // Use Sequelize to find the event by its ID and include speaker details
     const event = await Events.findByPk(eventId, {
       include: [
         {

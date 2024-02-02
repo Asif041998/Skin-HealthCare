@@ -6,7 +6,7 @@ const productNotesPutValidation = (data) => {
       .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
       .trim()
       .messages({
-        "string.empty" : "Please enter What I like",
+        "string.empty": "Please enter What I like",
         "string.base": "What I like must be a string",
         "string.pattern.base":
           "What I like can only contain a combination of alphabets and numbers",
@@ -15,13 +15,13 @@ const productNotesPutValidation = (data) => {
       .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
       .trim()
       .messages({
-        "string.empty" : "Please enter What I Don't Like",
+        "string.empty": "Please enter What I Don't Like",
         "string.base": "What I Don't Like must be a string",
         "string.pattern.base":
           "What I Don't Like can only contain a combination of alphabets and numbers",
       }),
     user_product_id: Joi.number().integer()
-    .messages({
+      .messages({
         "number.base": "user_product_id must be a valid number",
         "any.required": "user_product_id is required",
       }),

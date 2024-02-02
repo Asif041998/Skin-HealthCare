@@ -32,7 +32,7 @@ const Prescriptions = sequelize.define("user_prescriptions", {
     type: DataTypes.ENUM('current', 'past'),
     defaultValue: 'current', // Set the default value to 'current'
   }
-},{
+}, {
   freezeTableName: true
 });
 

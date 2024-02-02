@@ -9,7 +9,7 @@ const routineNotesPutValidation = (data) => {
         "date.format": "Date must be in the format YYYY-MM-DD",
       }),
     description: Joi.string()
-    .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
+      .regex(/^(?=.*[a-zA-Z])[\w\d!@#$%^&*()-+=,.?/\\;:'"<>\[\]{}|_~`]/)
       .trim()
       .messages({
         "string.base": "Comment must be a string",

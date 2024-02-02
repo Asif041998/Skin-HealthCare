@@ -7,5 +7,6 @@ router.post('/skincare-routines', adminVerify, SkincareRoutine101.skincareRoutin
 router.put('/skincare-routines/:id', adminVerify, SkincareRoutine101.updateSkincareRoutine101);
 router.delete('/skincare-routines/:id', adminVerify, SkincareRoutine101.deleteSkincareRoutine101);
 router.get('/skincare-routines/:id', adminVerify, SkincareRoutine101.getByIdSkincareRoutine101);
+router.get('/skincare-routines', adminVerify, SkincareRoutine101.getAllSkincareRoutine101);
 
 module.exports = router;
